@@ -385,11 +385,20 @@
     } else {
       links += '<span class="missing">apply link needed</span>';
     }
+    if (d.emailLink) {
+      links += '<a href="' + escapeHtml(d.emailLink) + '" target="_blank" rel="noopener">Confirmation email ↗</a>';
+    }
 
     var slug = slugify(d.company);
     var actionCell = '<div class="action-cell">';
     if (d.status === "applied") {
-      actionCell += '<span class="btn-status">—</span>';
+      if (d.copyMsg) {
+        actionCell +=
+          '<div class="confirm-box">Confirmed this session — not yet saved.<br>' +
+          '<button class="copy-msg" data-msg="' + escapeHtml(d.copyMsg) + '">Copy message for Claude to make it permanent</button></div>';
+      } else {
+        actionCell += '<span class="btn-status">—</span>';
+      }
     } else {
       actionCell +=
         '<button class="check-btn" data-company="' + escapeHtml(d.company) + '" data-slug="' + slug + '">I applied — check email</button>' +
@@ -415,7 +424,7 @@
     );
   }
 
-  (function renderAll() {
+  function renderAll() {
     var applied = DATA.filter(function (r) { return r.status === "applied"; });
     var prepared = DATA.filter(function (r) { return r.status !== "applied"; });
 
@@ -432,7 +441,8 @@
 
     document.getElementById("updated-line").textContent =
       DATA.length + " application" + (DATA.length === 1 ? "" : "s") + " tracked.";
-  })();
+  }
+  renderAll();
 
   // --- Gmail check (Google Identity Services, read-only, your own consent) ---
   var GOOGLE_CLIENT_ID = "829569303458-ski7kbln88ca88r13ti5a20irshebcv7.apps.googleusercontent.com";
@@ -474,6 +484,30 @@
     return f ? f.value : "";
   }
 
+  // Per-company verification term: what must actually appear in the email
+  // before we trust a "match" (Gmail's search silently broadens to loosely
+  // related results when a strict query finds nothing — this is the safety
+  // net against that).
+  var MATCH_TERMS = {
+    "Visier Solutions": "visier",
+    "Kinaxis": "kinaxis",
+    "Zaber Technologies": "zaber",
+    "Rivian and Volkswagen Group Technologies": "rivian",
+    "Atlassian": "atlassian",
+    "Remarcable": "remarcable",
+    "AMD": "amd",
+    "Intact Financial Corporation": "intact financial",
+    "Trench Group": "trench group",
+    "Lyft": "lyft"
+  };
+
+  function findDataEntry(company) {
+    for (var i = 0; i < DATA.length; i++) {
+      if (DATA[i].company === company) return DATA[i];
+    }
+    return null;
+  }
+
   async function checkGmailFor(company, slug, statusEl, btn) {
     statusEl.textContent = "Signing in to Google…";
     ensureAccessToken(async function (token, err) {
@@ -487,6 +521,7 @@
       }
       statusEl.textContent = "Checking your email…";
       try {
+        var matchTerm = (MATCH_TERMS[company] || company).toLowerCase();
         var q = '"' + company + '" (application OR applying OR "thank you for" OR received OR interview OR assessment) newer_than:5d -from:me';
         var listResp = await fetch(
           "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=" + encodeURIComponent(q),
@@ -504,29 +539,48 @@
           return;
         }
         var messages = listJson.messages || [];
-        if (!messages.length) {
+        var verified = null;
+        for (var i = 0; i < messages.length; i++) {
+          var msgResp = await fetch(
+            "https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messages[i].id +
+              "?format=metadata&metadataHeaders=Subject&metadataHeaders=From",
+            { headers: { Authorization: "Bearer " + token } }
+          );
+          var msgJson = await msgResp.json();
+          var headers = (msgJson.payload && msgJson.payload.headers) || [];
+          var subject = header(headers, "Subject");
+          var from = header(headers, "From");
+          var snippet = msgJson.snippet || "";
+          var haystack = (subject + " " + from + " " + snippet).toLowerCase();
+          if (haystack.indexOf(matchTerm) !== -1) {
+            verified = { subject: subject, from: from, threadId: msgJson.threadId || messages[i].id };
+            break;
+          }
+        }
+
+        if (!verified) {
           statusEl.textContent = "No confirmation email found yet for " + company + ".";
           btn.disabled = false;
           return;
         }
-        var msgResp = await fetch(
-          "https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messages[0].id +
-            "?format=metadata&metadataHeaders=Subject&metadataHeaders=From",
-          { headers: { Authorization: "Bearer " + token } }
-        );
-        var msgJson = await msgResp.json();
-        var headers = (msgJson.payload && msgJson.payload.headers) || [];
-        var subject = header(headers, "Subject");
-        var from = header(headers, "From");
-        var today = new Date().toISOString().slice(0, 10);
-        var evidenceMsg =
-          "Mark " + company + " as applied. Confirmed via email from " + from + ': "' + subject + '" (found ' + today + ").";
 
-        statusEl.innerHTML =
-          '<div class="confirm-box">Confirmed! From ' + escapeHtml(from) + ': &ldquo;' + escapeHtml(subject) + '&rdquo;<br>' +
-          '<button class="copy-msg" data-msg="' + escapeHtml(evidenceMsg) + '">Copy message for Claude</button></div>';
-        btn.textContent = "Confirmed ✓";
-        btn.disabled = true;
+        var today = new Date().toISOString().slice(0, 10);
+        var emailLink = "https://mail.google.com/mail/u/0/#all/" + verified.threadId;
+        var evidenceText = "Confirmed — " + verified.from + ', "' + verified.subject + '"';
+        var evidenceMsg =
+          "Mark " + company + " as applied. " + evidenceText + " (found " + today + "). Email: " + emailLink;
+
+        // Move the row instantly (this session only — not saved to the file
+        // until you paste the message below and I push the update).
+        var entry = findDataEntry(company);
+        if (entry) {
+          entry.status = "applied";
+          entry.date = today;
+          entry.evidence = evidenceText;
+          entry.emailLink = emailLink;
+          entry.copyMsg = evidenceMsg;
+          renderAll();
+        }
       } catch (e) {
         statusEl.textContent = "Error checking Gmail. Try again.";
         btn.disabled = false;
