@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Co-op Ledger</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #fbfbfc;
+    --border: #dfe3e8;
+    --text: #161a23;
+    --text-muted: #5c6472;
+    --text-faint: #8a91a0;
+    --accent: #2e5c8a;
+    --accent-soft: #e8f0f8;
+    --good: #1f7a50;
+    --good-soft: #e4f5ec;
+    --warn: #b4720c;
+    --warn-soft: #fbf1df;
+    --shadow: 0 1px 2px rgba(20, 24, 34, 0.04);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1116;
+      --surface: #161b22;
+      --surface-2: #12161c;
+      --border: #272e38;
+      --text: #e7eaef;
+      --text-muted: #9ba3b0;
+      --text-faint: #6b7280;
+      --accent: #86b6e6;
+      --accent-soft: #1b2a3a;
+      --good: #4cc98a;
+      --good-soft: #16301f;
+      --warn: #e8b34d;
+      --warn-soft: #332711;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header.page-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 700;
+    font-size: 38px;
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .subhead {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 65ch;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 28px 0 36px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .stat .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 28px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .stat .label {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .stat.applied .num { color: var(--good); }
+  .stat.prepared .num { color: var(--warn); }
+
+  .updated-line {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-bottom: 40px;
+  }
+
+  section.group { margin-bottom: 40px; }
+  .group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .group-head h2 {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .group-count {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+
+  .list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1.7fr 0.9fr 1.3fr 1.1fr;
+    gap: 16px;
+    padding: 16px 20px;
+    align-items: start;
+  }
+  .row + .row { border-top: 1px solid var(--border); }
+  .row:hover { background: var(--surface-2); }
+
+  .company {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 600;
+    font-size: 16.5px;
+  }
+  .role {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    margin-top: 2px;
+  }
+  .loc {
+    color: var(--text-faint);
+    font-size: 12.5px;
+    margin-top: 4px;
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 999px;
+    width: fit-content;
+  }
+  .pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .pill.applied { background: var(--good-soft); color: var(--good); }
+  .pill.prepared { background: var(--warn-soft); color: var(--warn); }
+  .date {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-top: 6px;
+  }
+
+  .evidence {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .links a {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .links a:hover { border-bottom-color: var(--accent); }
+  .links .missing {
+    font-size: 12.5px;
+    color: var(--text-faint);
+    font-style: italic;
+  }
+
+  footer {
+    text-align: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    margin-top: 20px;
+  }
+  footer a { color: var(--text-faint); }
+
+  @media (max-width: 720px) {
+    .row { grid-template-columns: 1fr; gap: 8px; }
+    .stats { grid-template-columns: 1fr; }
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="eyebrow">Mandeep Singh &middot; Co-op Search</div>
+    <h1>The Co-op Ledger</h1>
+    <div class="subhead">Record of every Winter/Summer 2027 co-op application — status, tailored documents, and the original posting, in one place.</div>
+  </header>
+
+  <div class="stats">
+    <div class="stat applied">
+      <div class="num" id="stat-applied">–</div>
+      <div class="label">Applied</div>
+    </div>
+    <div class="stat prepared">
+      <div class="num" id="stat-prepared">–</div>
+      <div class="label">Prepared, not yet applied</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="stat-total">–</div>
+      <div class="label">Total tracked</div>
+    </div>
+  </div>
+  <div class="updated-line" id="updated-line"></div>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Applied</h2>
+      <span class="group-count" id="applied-count"></span>
+    </div>
+    <div class="list" id="applied-list"></div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Prepared</h2>
+      <span class="group-count" id="prepared-count"></span>
+    </div>
+    <div class="list" id="prepared-list"></div>
+  </section>
+
+  <footer>Updated 2026-09-15 &middot; source: <a href="https://github.com/deepmroot/coop-ledger">deepmroot/coop-ledger</a></footer>
+</div>
+
+<script>
+  var DATA = [
+    { company: "Visier Solutions", role: "Software Developer Co-op", location: "Vancouver, BC", status: "applied", date: "2026-09-15", evidence: "Confirmed — Greenhouse application receipt email", applyLink: "https://job-boards.greenhouse.io/visiersolutionsinc/jobs/4711071006", resumeUrl: "applications/Mandeep_Singh_Visier_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Visier_Cover_Letter.pdf" },
+    { company: "Kinaxis", role: "Co-op/Intern Developer, Machine Learning", location: "Canada", status: "applied", date: "2026-09-15", evidence: "Confirmed — iCIMS application receipt email. Applied directly, not through this tracker's generated docs.", applyLink: "", resumeUrl: "", coverUrl: "" },
+    { company: "Zaber Technologies", role: "Software Developer Co-op", location: "Vancouver, BC", status: "prepared", date: "", evidence: "Docs ready. Autofill attempt had upload issues (resume missing, cover letter mis-filed) — apply manually.", applyLink: "https://apply.workable.com/zaber/j/EAB5877DC3/", resumeUrl: "applications/Mandeep_Singh_Zaber_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Zaber_Cover_Letter.pdf" },
+    { company: "Rivian and Volkswagen Group Technologies", role: "Software Engineering Intern, Vehicle Controls", location: "Vancouver, BC", status: "prepared", date: "", evidence: "Docs ready, not yet submitted.", applyLink: "https://jobs.ashbyhq.com/rivianvw.tech/e00c49b7-44c1-4f0c-af3c-2c7a7402185b/", resumeUrl: "applications/Mandeep_Singh_RivianVW_Resume.pdf", coverUrl: "applications/Mandeep_Singh_RivianVW_Cover_Letter.pdf" },
+    { company: "Atlassian", role: "Software Engineer Intern", location: "Burnaby / Vancouver / Richmond, BC", status: "prepared", date: "", evidence: "Docs ready, not yet submitted.", applyLink: "https://campus-globalcareers-atlassian.icims.com/jobs/26275/software-engineer-intern%2c-2027-canada/job", resumeUrl: "applications/Mandeep_Singh_Atlassian_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Atlassian_Cover_Letter.pdf" },
+    { company: "Remarcable", role: "Full Stack Developer Co-op", location: "Vancouver, BC", status: "prepared", date: "", evidence: "Docs ready, not yet submitted.", applyLink: "https://jobs.ashbyhq.com/remarcable-inc/a4f3aaaa-9469-42e8-a610-450d25eb5da7/", resumeUrl: "applications/Mandeep_Singh_Remarcable_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Remarcable_Cover_Letter.pdf" },
+    { company: "AMD", role: "Software Engineer Intern/Co-op", location: "Vancouver, BC", status: "prepared", date: "", evidence: "Docs ready, not yet submitted.", applyLink: "https://careers.amd.com/jobs/91367?icims=1", resumeUrl: "applications/Mandeep_Singh_AMD_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AMD_Cover_Letter.pdf" },
+    { company: "Intact Financial Corporation", role: "AI Developer Intern Co-op", location: "Vancouver, BC", status: "prepared", date: "", evidence: "Docs ready, not yet submitted.", applyLink: "https://intactfc.wd3.myworkdayjobs.com/en-US/intactfc/job/Vancouver-British-Columbia-CAN/AI-Developer---4-Month-Internship-Co-op--Winter-2027--_R155235", resumeUrl: "applications/Mandeep_Singh_Intact_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Intact_Cover_Letter.pdf" },
+    { company: "Lyft", role: "Backend Intern (Summer 2027)", location: "Montreal, QC", status: "prepared", date: "", evidence: "Docs ready. Posting only gave an internal ID (111170), no apply URL — needs the real link.", applyLink: "", resumeUrl: "applications/Mandeep_Singh_Lyft_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Lyft_Cover_Letter.pdf" },
+    { company: "Trench Group", role: "AI & ML Developer Intern", location: "Scarborough, ON", status: "prepared", date: "", evidence: "Docs ready. Apply link not confirmed — job posting text didn't include the Apply Now URL.", applyLink: "", resumeUrl: "applications/Mandeep_Singh_Trench_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Trench_Cover_Letter.pdf" }
+  ];
+
+  function escapeHtml(s) {
+    return String(s || "").replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function renderRow(d) {
+    var statusClass = d.status === "applied" ? "applied" : "prepared";
+    var links = "";
+    if (d.resumeUrl) {
+      links += '<a href="' + escapeHtml(d.resumeUrl) + '" target="_blank" rel="noopener">Resume</a>';
+    } else {
+      links += '<span class="missing">no resume file</span>';
+    }
+    if (d.coverUrl) {
+      links += '<a href="' + escapeHtml(d.coverUrl) + '" target="_blank" rel="noopener">Cover letter</a>';
+    }
+    if (d.applyLink) {
+      links += '<a href="' + escapeHtml(d.applyLink) + '" target="_blank" rel="noopener">Posting ↗</a>';
+    } else {
+      links += '<span class="missing">apply link needed</span>';
+    }
+
+    return (
+      '<div class="row">' +
+        '<div>' +
+          '<div class="company">' + escapeHtml(d.company) + '</div>' +
+          '<div class="role">' + escapeHtml(d.role) + '</div>' +
+          '<div class="loc">' + escapeHtml(d.location || "") + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<span class="pill ' + statusClass + '">' + escapeHtml(d.status) + '</span>' +
+          (d.date ? '<div class="date">' + escapeHtml(d.date) + '</div>' : '') +
+        '</div>' +
+        '<div class="evidence">' + escapeHtml(d.evidence || "") + '</div>' +
+        '<div class="links">' + links + '</div>' +
+      '</div>'
+    );
+  }
+
+  (function renderAll() {
+    var applied = DATA.filter(function (r) { return r.status === "applied"; });
+    var prepared = DATA.filter(function (r) { return r.status !== "applied"; });
+
+    document.getElementById("stat-applied").textContent = applied.length;
+    document.getElementById("stat-prepared").textContent = prepared.length;
+    document.getElementById("stat-total").textContent = DATA.length;
+    document.getElementById("applied-count").textContent = applied.length + (applied.length === 1 ? " company" : " companies");
+    document.getElementById("prepared-count").textContent = prepared.length + (prepared.length === 1 ? " company" : " companies");
+
+    document.getElementById("applied-list").innerHTML =
+      applied.length ? applied.map(renderRow).join("") : '<div class="empty">Nothing applied yet.</div>';
+    document.getElementById("prepared-list").innerHTML =
+      prepared.length ? prepared.map(renderRow).join("") : '<div class="empty">Nothing queued.</div>';
+
+    document.getElementById("updated-line").textContent =
+      DATA.length + " application" + (DATA.length === 1 ? "" : "s") + " tracked.";
+  })();
+</script>
+</body>
+</html>
