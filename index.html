@@ -487,7 +487,7 @@
       }
       statusEl.textContent = "Checking your email…";
       try {
-        var q = '"' + company + '" (application OR applying OR "thank you for" OR received OR interview OR assessment) newer_than:5d';
+        var q = '"' + company + '" (application OR applying OR "thank you for" OR received OR interview OR assessment) newer_than:5d -from:me';
         var listResp = await fetch(
           "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=" + encodeURIComponent(q),
           { headers: { Authorization: "Bearer " + token } }
