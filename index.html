@@ -570,16 +570,34 @@
         var evidenceMsg =
           "Mark " + company + " as applied. " + evidenceText + " (found " + today + "). Email: " + emailLink;
 
-        // Move the row instantly (this session only — not saved to the file
-        // until you paste the message below and I push the update).
+        // Move the row instantly in the DOM.
         var entry = findDataEntry(company);
         if (entry) {
           entry.status = "applied";
           entry.date = today;
           entry.evidence = evidenceText;
           entry.emailLink = emailLink;
-          entry.copyMsg = evidenceMsg;
+          entry.copyMsg = evidenceMsg; // fallback, cleared below if the save succeeds
           renderAll();
+        }
+
+        // Try to persist permanently via the serverless function. If it's
+        // not deployed/configured yet, this fails silently and the
+        // "copy message" fallback (set above) stays visible instead.
+        try {
+          var saveResp = await fetch("/api/mark-applied", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ company: company, evidence: evidenceText, date: today, emailLink: emailLink }),
+          });
+          if (saveResp.ok) {
+            if (entry) {
+              entry.copyMsg = null;
+              renderAll();
+            }
+          }
+        } catch (saveErr) {
+          // network/CORS/not-deployed — fallback message already showing
         }
       } catch (e) {
         statusEl.textContent = "Error checking Gmail. Try again.";
