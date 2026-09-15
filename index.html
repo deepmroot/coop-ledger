@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Co-op Ledger</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
@@ -250,6 +251,54 @@
     color: var(--text-faint);
     font-size: 14px;
   }
+
+  .row {
+    grid-template-columns: 1.5fr 0.8fr 1.05fr 0.9fr 1.05fr;
+  }
+  .action-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .check-btn {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .check-btn:disabled { opacity: 0.6; cursor: default; }
+  .btn-status {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    max-width: 22ch;
+  }
+  .confirm-box {
+    font-size: 12px;
+    color: var(--good);
+    max-width: 24ch;
+  }
+  .copy-msg {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--accent);
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  @media (max-width: 780px) {
+    .row { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -316,6 +365,10 @@
     });
   }
 
+  function slugify(s) {
+    return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  }
+
   function renderRow(d) {
     var statusClass = d.status === "applied" ? "applied" : "prepared";
     var links = "";
@@ -333,6 +386,17 @@
       links += '<span class="missing">apply link needed</span>';
     }
 
+    var slug = slugify(d.company);
+    var actionCell = '<div class="action-cell">';
+    if (d.status === "applied") {
+      actionCell += '<span class="btn-status">—</span>';
+    } else {
+      actionCell +=
+        '<button class="check-btn" data-company="' + escapeHtml(d.company) + '" data-slug="' + slug + '">I applied — check email</button>' +
+        '<span class="btn-status" id="btn-status-' + slug + '"></span>';
+    }
+    actionCell += '</div>';
+
     return (
       '<div class="row">' +
         '<div>' +
@@ -346,6 +410,7 @@
         '</div>' +
         '<div class="evidence">' + escapeHtml(d.evidence || "") + '</div>' +
         '<div class="links">' + links + '</div>' +
+        actionCell +
       '</div>'
     );
   }
@@ -368,6 +433,129 @@
     document.getElementById("updated-line").textContent =
       DATA.length + " application" + (DATA.length === 1 ? "" : "s") + " tracked.";
   })();
+
+  // --- Gmail check (Google Identity Services, read-only, your own consent) ---
+  var GOOGLE_CLIENT_ID = "829569303458-ski7kbln88ca88r13ti5a20irshebcv7.apps.googleusercontent.com";
+  var GMAIL_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
+  var tokenClient = null;
+  var gmailAccessToken = null;
+
+  function ensureAccessToken(callback) {
+    if (gmailAccessToken) {
+      callback(gmailAccessToken, null);
+      return;
+    }
+    if (!window.google || !google.accounts || !google.accounts.oauth2) {
+      callback(null, "not_loaded");
+      return;
+    }
+    if (!tokenClient) {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: GMAIL_SCOPE,
+        callback: function () {}
+      });
+    }
+    tokenClient.callback = function (resp) {
+      if (resp && resp.error) {
+        callback(null, resp.error);
+      } else if (resp && resp.access_token) {
+        gmailAccessToken = resp.access_token;
+        callback(gmailAccessToken, null);
+      } else {
+        callback(null, "no_token");
+      }
+    };
+    tokenClient.requestAccessToken({ prompt: "" });
+  }
+
+  function header(headers, name) {
+    var f = (headers || []).find(function (x) { return x.name === name; });
+    return f ? f.value : "";
+  }
+
+  async function checkGmailFor(company, slug, statusEl, btn) {
+    statusEl.textContent = "Signing in to Google…";
+    ensureAccessToken(async function (token, err) {
+      if (err || !token) {
+        statusEl.textContent =
+          err === "not_loaded"
+            ? "Google sign-in still loading — try again in a second."
+            : "Google sign-in didn't complete. Try again.";
+        btn.disabled = false;
+        return;
+      }
+      statusEl.textContent = "Checking your email…";
+      try {
+        var q = '"' + company + '" (application OR applying OR "thank you for" OR received OR interview OR assessment) newer_than:5d';
+        var listResp = await fetch(
+          "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=" + encodeURIComponent(q),
+          { headers: { Authorization: "Bearer " + token } }
+        );
+        var listJson = await listResp.json();
+        if (!listResp.ok) {
+          if (listResp.status === 401) {
+            gmailAccessToken = null;
+            statusEl.textContent = "Session expired — click again to re-sign in.";
+          } else {
+            statusEl.textContent = "Gmail check failed (" + listResp.status + ").";
+          }
+          btn.disabled = false;
+          return;
+        }
+        var messages = listJson.messages || [];
+        if (!messages.length) {
+          statusEl.textContent = "No confirmation email found yet for " + company + ".";
+          btn.disabled = false;
+          return;
+        }
+        var msgResp = await fetch(
+          "https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messages[0].id +
+            "?format=metadata&metadataHeaders=Subject&metadataHeaders=From",
+          { headers: { Authorization: "Bearer " + token } }
+        );
+        var msgJson = await msgResp.json();
+        var headers = (msgJson.payload && msgJson.payload.headers) || [];
+        var subject = header(headers, "Subject");
+        var from = header(headers, "From");
+        var today = new Date().toISOString().slice(0, 10);
+        var evidenceMsg =
+          "Mark " + company + " as applied. Confirmed via email from " + from + ': "' + subject + '" (found ' + today + ").";
+
+        statusEl.innerHTML =
+          '<div class="confirm-box">Confirmed! From ' + escapeHtml(from) + ': &ldquo;' + escapeHtml(subject) + '&rdquo;<br>' +
+          '<button class="copy-msg" data-msg="' + escapeHtml(evidenceMsg) + '">Copy message for Claude</button></div>';
+        btn.textContent = "Confirmed ✓";
+        btn.disabled = true;
+      } catch (e) {
+        statusEl.textContent = "Error checking Gmail. Try again.";
+        btn.disabled = false;
+      }
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    var checkBtn = e.target.closest(".check-btn");
+    if (checkBtn) {
+      checkBtn.disabled = true;
+      var company = checkBtn.dataset.company;
+      var slug = checkBtn.dataset.slug;
+      var statusEl = document.getElementById("btn-status-" + slug);
+      checkGmailFor(company, slug, statusEl, checkBtn);
+      return;
+    }
+    var copyBtn = e.target.closest(".copy-msg");
+    if (copyBtn) {
+      var msg = copyBtn.dataset.msg;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(function () {
+          copyBtn.textContent = "Copied ✓";
+        }).catch(function () {
+          copyBtn.textContent = "Copy failed — select manually";
+        });
+      }
+    }
+  });
 </script>
 </body>
 </html>
