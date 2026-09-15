@@ -48,12 +48,17 @@ function updateLedgerHtml(content, company, status, date, evidence, emailLink) {
     if (line.includes(`company: "${company}"`)) {
       found = true;
       let l = line;
-      l = l.replace(/status:\s*"[^"]*"/, `status: "${status}"`);
-      l = l.replace(/date:\s*"[^"]*"/, `date: "${date}"`);
-      l = l.replace(/evidence:\s*"[^"]*"/, `evidence: "${escapeJsString(evidence)}"`);
+      // (?:[^"\\]|\\.)* correctly skips escaped quotes (\") inside the string
+      // instead of stopping at them — a plain [^"]* treats \" as a terminator
+      // and truncates mid-string, corrupting the line.
+      const STR = '(?:[^"\\\\]|\\\\.)*';
+      l = l.replace(new RegExp(`status:\\s*"${STR}"`), `status: "${status}"`);
+      l = l.replace(new RegExp(`date:\\s*"${STR}"`), `date: "${date}"`);
+      l = l.replace(new RegExp(`evidence:\\s*"${STR}"`), `evidence: "${escapeJsString(evidence)}"`);
       if (emailLink) {
-        if (/emailLink:\s*"[^"]*"/.test(l)) {
-          l = l.replace(/emailLink:\s*"[^"]*"/, `emailLink: "${emailLink}"`);
+        const emailLinkRe = new RegExp(`emailLink:\\s*"${STR}"`);
+        if (emailLinkRe.test(l)) {
+          l = l.replace(emailLinkRe, `emailLink: "${emailLink}"`);
         } else {
           l = l.replace(/\s*\},\s*$/, `, emailLink: "${emailLink}" },`);
         }
