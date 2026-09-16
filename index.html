@@ -30,7 +30,11 @@
     <p class="mt-2 text-sm text-slate-400 max-w-xl">Record of every Winter/Summer 2027 co-op application — status, tailored documents, and the original posting, in one place.</p>
   </header>
 
-  <div class="grid grid-cols-3 gap-3 mb-8">
+  <div class="grid grid-cols-4 gap-3 mb-8">
+    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
+      <div class="font-mono text-2xl tabular-nums text-violet-300" id="stat-interview">–</div>
+      <div class="text-xs text-slate-400 mt-1">Interview</div>
+    </div>
     <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
       <div class="font-mono text-2xl tabular-nums text-emerald-400" id="stat-applied">–</div>
       <div class="text-xs text-slate-400 mt-1">Applied</div>
@@ -45,6 +49,14 @@
     </div>
   </div>
   <div class="font-mono text-xs text-slate-500 mb-10" id="updated-line"></div>
+
+  <section class="mb-10">
+    <div class="flex items-baseline gap-2 mb-3">
+      <h2 class="font-display text-lg font-medium text-slate-100">Interview</h2>
+      <span class="font-mono text-xs text-slate-500" id="interview-count"></span>
+    </div>
+    <div class="rounded-lg border border-slate-800 divide-y divide-slate-800 bg-slate-800/20 overflow-hidden" id="interview-list"></div>
+  </section>
 
   <section class="mb-10">
     <div class="flex items-baseline gap-2 mb-3">
@@ -73,7 +85,7 @@
     { company: "Zaber Technologies", role: "Software Developer Co-op", location: "Vancouver, BC", status: "applied", date: "2026-09-15", evidence: "Confirmed — Workable application receipt email, \"Thanks for applying to Zaber Technologies\"", applyLink: "https://apply.workable.com/zaber/j/EAB5877DC3/", resumeUrl: "applications/Mandeep_Singh_Zaber_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Zaber_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0a710140609284" },
     { company: "Rivian and Volkswagen Group Technologies", role: "Software Engineering Intern, Vehicle Controls", location: "Vancouver, BC", status: "applied", date: "2026-09-15", evidence: "Confirmed — no-reply@rivianvw.tech, \"Thank you for applying to Rivian and Volkswagen Group Technologies!\"", applyLink: "https://jobs.ashbyhq.com/rivianvw.tech/e00c49b7-44c1-4f0c-af3c-2c7a7402185b/", resumeUrl: "applications/Mandeep_Singh_RivianVW_Resume.pdf", coverUrl: "applications/Mandeep_Singh_RivianVW_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0a719d7de1f886" },
     { company: "Atlassian", role: "Software Engineer Intern", location: "Burnaby / Vancouver / Richmond, BC", status: "applied", date: "2026-09-15", evidence: "Confirmed — \"Atlassian @ icims\" <atlassian+autoreply@talent.icims.com>, \"Atlassian: Thanks for Completing Your Application\"", applyLink: "https://campus-globalcareers-atlassian.icims.com/jobs/26275/software-engineer-intern%2c-2027-canada/job", resumeUrl: "applications/Mandeep_Singh_Atlassian_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Atlassian_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0a75d60501fb61" },
-    { company: "Remarcable", role: "Full Stack Developer Co-op", location: "Vancouver, BC", status: "applied", date: "2026-09-16", evidence: "Confirmed — \"Remarcable, Inc.'s Hiring Team\" <no-reply@ashbyhq.com>, \"Thank you for your Application with Remarcable, Inc.\"", applyLink: "https://jobs.ashbyhq.com/remarcable-inc/a4f3aaaa-9469-42e8-a610-450d25eb5da7/", resumeUrl: "applications/Mandeep_Singh_Remarcable_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Remarcable_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0a766d60fb02e6" },
+    { company: "Remarcable", role: "Full Stack Developer Co-op", location: "Vancouver, BC", status: "interview", date: "2026-09-16", evidence: "Invited to intro call — Natalie Chan, Remarcable Hiring Team: \"We have reviewed your application... and we'd like to move to the next step with you.\"", applyLink: "https://jobs.ashbyhq.com/remarcable-inc/a4f3aaaa-9469-42e8-a610-450d25eb5da7/", resumeUrl: "applications/Mandeep_Singh_Remarcable_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Remarcable_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0a766d60fb02e6", interviewLink: "https://you.ashbyhq.com/meeting/bd2022d2-d44d-4b91-9e4f-d6c5b5ba0994/" },
     { company: "AMD", role: "Software Engineer Intern/Co-op", location: "Vancouver, BC", status: "applied", date: "2026-09-16", evidence: "Confirmed — AMD Careers <amd+autoreply@talent.icims.com>, \"Thank You for Applying at AMD\"", applyLink: "https://careers.amd.com/jobs/91367?icims=1", resumeUrl: "applications/Mandeep_Singh_AMD_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AMD_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0aaefc841cfad4" },
     { company: "Intact Financial Corporation", role: "AI Developer Intern Co-op", location: "Vancouver, BC", status: "applied", date: "2026-09-16", evidence: "Confirmed — \"Thanks for Applying\" email from ContactPeople@intact.net, AI Developer – 4-Month Internship/Co-op (Winter 2027)", applyLink: "https://intactfc.wd3.myworkdayjobs.com/en-US/intactfc/job/Vancouver-British-Columbia-CAN/AI-Developer---4-Month-Internship-Co-op--Winter-2027--_R155235", resumeUrl: "applications/Mandeep_Singh_Intact_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Intact_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0aaf5d3ca0bfcd" },
     { company: "Trench Group", role: "AI & ML Developer Intern", location: "Scarborough, ON", status: "applied", date: "2026-09-16", evidence: "Confirmed — Recruiting-NoReply@csod.trench-group.com, \"Thank you for your application at Trench\"", applyLink: "", resumeUrl: "applications/Mandeep_Singh_Trench_Resume.pdf", coverUrl: "applications/Mandeep_Singh_Trench_Cover_Letter.pdf", emailLink: "https://mail.google.com/mail/u/0/#all/1a0ab02ce848887c" },
@@ -105,10 +117,13 @@
   }
 
   function renderRow(d) {
-    var applied = d.status === "applied";
-    var pillClasses = applied
-      ? "bg-emerald-400/10 text-emerald-300 border-emerald-400/20"
-      : "bg-amber-300/10 text-amber-200 border-amber-300/20";
+    var settled = d.status === "applied" || d.status === "interview";
+    var pillClasses =
+      d.status === "interview"
+        ? "bg-violet-400/10 text-violet-300 border-violet-400/20"
+        : d.status === "applied"
+        ? "bg-emerald-400/10 text-emerald-300 border-emerald-400/20"
+        : "bg-amber-300/10 text-amber-200 border-amber-300/20";
 
     var links = "";
     if (d.resumeUrl) {
@@ -127,10 +142,13 @@
     if (d.emailLink) {
       links += '<a class="text-sm text-sky-400 hover:text-sky-300 hover:underline underline-offset-2" href="' + escapeHtml(d.emailLink) + '" target="_blank" rel="noopener">Confirmation email ↗</a>';
     }
+    if (d.interviewLink) {
+      links += '<a class="text-sm font-medium text-violet-300 hover:text-violet-200 hover:underline underline-offset-2" href="' + escapeHtml(d.interviewLink) + '" target="_blank" rel="noopener">Book intro call ↗</a>';
+    }
 
     var slug = slugify(d.company);
     var actionCell = '<div class="flex flex-col items-start gap-1.5">';
-    if (applied) {
+    if (settled) {
       if (d.copyMsg) {
         actionCell +=
           '<div class="text-xs text-emerald-300 max-w-[24ch]">Confirmed this session — not yet saved.</div>' +
@@ -168,16 +186,21 @@
   }
 
   function renderAll() {
+    var interview = DATA.filter(function (r) { return r.status === "interview"; });
     var applied = DATA.filter(function (r) { return r.status === "applied"; });
-    var prepared = DATA.filter(function (r) { return r.status !== "applied"; });
+    var prepared = DATA.filter(function (r) { return r.status !== "applied" && r.status !== "interview"; });
 
+    document.getElementById("stat-interview").textContent = interview.length;
     document.getElementById("stat-applied").textContent = applied.length;
     document.getElementById("stat-prepared").textContent = prepared.length;
     document.getElementById("stat-total").textContent = DATA.length;
+    document.getElementById("interview-count").textContent = interview.length + (interview.length === 1 ? " company" : " companies");
     document.getElementById("applied-count").textContent = applied.length + (applied.length === 1 ? " company" : " companies");
     document.getElementById("prepared-count").textContent = prepared.length + (prepared.length === 1 ? " company" : " companies");
 
     var emptyClasses = "p-10 text-center text-slate-500 text-sm";
+    document.getElementById("interview-list").innerHTML =
+      interview.length ? interview.map(renderRow).join("") : '<div class="' + emptyClasses + '">No interviews yet.</div>';
     document.getElementById("applied-list").innerHTML =
       applied.length ? applied.map(renderRow).join("") : '<div class="' + emptyClasses + '">Nothing applied yet.</div>';
     document.getElementById("prepared-list").innerHTML =
