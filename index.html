@@ -4,348 +4,65 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Co-op Ledger</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+          display: ['"Fraunces"', 'Georgia', 'serif'],
+        },
+      },
+    },
+  };
+</script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-  /* Deliberately single-theme (dark) — every color is a fixed value below,
-     nothing deferred to the host's light/dark preference. */
-  :root {
-    --bg: #130f0c;
-    --surface: #1d1712;
-    --surface-2: #251e17;
-    --border: #382e23;
-    --text: #ece3d4;
-    --text-muted: #ab9c87;
-    --text-faint: #6f6252;
-    --accent: #e3a63f;
-    --accent-soft: #2c2014;
-    --good: #8fbb74;
-    --good-soft: #1d2617;
-    --warn: #cf8c5a;
-    --warn-soft: #2c2014;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.18);
-  }
-
-  * { box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    background-image: radial-gradient(circle at 12% -10%, rgba(227, 166, 63, 0.05), transparent 45%);
-    color: var(--text);
-    margin: 0;
-    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-    line-height: 1.55;
-  }
-
-  .wrap {
-    max-width: 940px;
-    margin: 0 auto;
-    padding: 56px 24px 90px;
-  }
-
-  header.page-head {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-bottom: 22px;
-    margin-bottom: 30px;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-  }
-  header.page-head::before {
-    content: "";
-    position: absolute;
-    top: -1px;
-    left: 0;
-    width: 46px;
-    height: 3px;
-    background: var(--accent);
-  }
-  .eyebrow {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-  h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-optical-sizing: auto;
-    font-weight: 620;
-    font-size: 44px;
-    margin: 0;
-    text-wrap: balance;
-    letter-spacing: -0.015em;
-    color: var(--text);
-  }
-  .subhead {
-    color: var(--text-muted);
-    font-size: 15px;
-    max-width: 62ch;
-  }
-
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin: 0 0 36px;
-  }
-  .stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 2px solid var(--border);
-    border-radius: 6px;
-    padding: 18px 18px 16px;
-    box-shadow: var(--shadow);
-  }
-  .stat .num {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 30px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.1;
-    color: var(--text);
-  }
-  .stat .label {
-    font-size: 12.5px;
-    color: var(--text-muted);
-    margin-top: 5px;
-  }
-  .stat.applied { border-top-color: var(--good); }
-  .stat.applied .num { color: var(--good); }
-  .stat.prepared { border-top-color: var(--warn); }
-  .stat.prepared .num { color: var(--warn); }
-  .stat.total { border-top-color: var(--accent); }
-
-  .updated-line {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 12px;
-    color: var(--text-faint);
-    margin-bottom: 44px;
-  }
-
-  section.group { margin-bottom: 44px; }
-  .group-head {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .group-head h2 {
-    font-family: "Fraunces", Georgia, serif;
-    font-optical-sizing: auto;
-    font-size: 21px;
-    font-weight: 560;
-    margin: 0;
-    color: var(--text);
-  }
-  .group-count {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 12.5px;
-    color: var(--text-faint);
-  }
-
-  .list {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-  .row {
-    display: grid;
-    grid-template-columns: 1.5fr 0.8fr 1.05fr 0.9fr 1.05fr;
-    gap: 16px;
-    padding: 17px 20px;
-    align-items: start;
-    border-left: 2px solid transparent;
-  }
-  .row + .row { border-top: 1px solid var(--border); }
-  .row:hover { background: var(--surface-2); border-left-color: var(--accent); }
-
-  .company {
-    font-family: "Fraunces", Georgia, serif;
-    font-optical-sizing: auto;
-    font-weight: 560;
-    font-size: 17px;
-    color: var(--text);
-  }
-  .role {
-    color: var(--text-muted);
-    font-size: 13.5px;
-    margin-top: 3px;
-  }
-  .loc {
-    color: var(--text-faint);
-    font-size: 12px;
-    margin-top: 5px;
-    font-family: "IBM Plex Mono", monospace;
-  }
-
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 4px 9px;
-    border-radius: 3px;
-    width: fit-content;
-    border: 1px solid transparent;
-  }
-  .pill::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  .pill.applied { background: var(--good-soft); color: var(--good); border-color: rgba(143, 187, 116, 0.25); }
-  .pill.prepared { background: var(--warn-soft); color: var(--warn); border-color: rgba(207, 140, 90, 0.25); }
-  .date {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 12px;
-    color: var(--text-faint);
-    margin-top: 7px;
-  }
-
-  .evidence {
-    font-size: 13px;
-    color: var(--text-muted);
-  }
-
-  .links {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-  }
-  .links a {
-    font-size: 13px;
-    color: var(--accent);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-  }
-  .links a:hover { border-bottom-color: var(--accent); }
-  .links .missing {
-    font-size: 12.5px;
-    color: var(--text-faint);
-    font-style: italic;
-  }
-
-  footer {
-    text-align: center;
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 11.5px;
-    color: var(--text-faint);
-    margin-top: 24px;
-  }
-  footer a { color: var(--text-faint); }
-
-  a:focus-visible, button:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-
-  .empty {
-    padding: 40px 20px;
-    text-align: center;
-    color: var(--text-faint);
-    font-size: 14px;
-  }
-
-  .action-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-  }
-  .check-btn {
-    font-family: "IBM Plex Sans", sans-serif;
-    font-size: 12.5px;
-    font-weight: 500;
-    padding: 6px 12px;
-    border-radius: 5px;
-    border: 1px solid var(--accent);
-    background: var(--accent-soft);
-    color: var(--accent);
-    cursor: pointer;
-  }
-  .check-btn:hover { background: rgba(227, 166, 63, 0.18); }
-  .check-btn:disabled { opacity: 0.55; cursor: default; }
-  .btn-status {
-    font-size: 11.5px;
-    color: var(--text-faint);
-    max-width: 22ch;
-  }
-  .confirm-box {
-    font-size: 12px;
-    color: var(--good);
-    max-width: 24ch;
-  }
-  .copy-msg {
-    display: inline-block;
-    margin-top: 4px;
-    font-size: 11px;
-    color: var(--accent);
-    background: none;
-    border: none;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-    font-family: inherit;
-  }
-
-  @media (max-width: 780px) {
-    .row { grid-template-columns: 1fr; gap: 8px; }
-    .stats { grid-template-columns: 1fr; }
-  }
-</style>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-200 font-sans antialiased">
 
-<div class="wrap">
-  <header class="page-head">
-    <div class="eyebrow">Mandeep Singh &middot; Co-op Search</div>
-    <h1>The Co-op Ledger</h1>
-    <div class="subhead">Record of every Winter/Summer 2027 co-op application — status, tailored documents, and the original posting, in one place.</div>
+<div class="max-w-4xl mx-auto px-6 py-14">
+  <header class="border-b border-slate-800 pb-6 mb-8">
+    <div class="font-mono text-xs uppercase tracking-widest text-sky-400 mb-2">Mandeep Singh &middot; Co-op Search</div>
+    <h1 class="font-display text-4xl font-semibold text-slate-100 text-balance">The Co-op Ledger</h1>
+    <p class="mt-2 text-sm text-slate-400 max-w-xl">Record of every Winter/Summer 2027 co-op application — status, tailored documents, and the original posting, in one place.</p>
   </header>
 
-  <div class="stats">
-    <div class="stat applied">
-      <div class="num" id="stat-applied">–</div>
-      <div class="label">Applied</div>
+  <div class="grid grid-cols-3 gap-3 mb-8">
+    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
+      <div class="font-mono text-2xl tabular-nums text-emerald-400" id="stat-applied">–</div>
+      <div class="text-xs text-slate-400 mt-1">Applied</div>
     </div>
-    <div class="stat prepared">
-      <div class="num" id="stat-prepared">–</div>
-      <div class="label">Prepared, not yet applied</div>
+    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
+      <div class="font-mono text-2xl tabular-nums text-amber-300" id="stat-prepared">–</div>
+      <div class="text-xs text-slate-400 mt-1">Prepared, not yet applied</div>
     </div>
-    <div class="stat total">
-      <div class="num" id="stat-total">–</div>
-      <div class="label">Total tracked</div>
+    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
+      <div class="font-mono text-2xl tabular-nums text-sky-400" id="stat-total">–</div>
+      <div class="text-xs text-slate-400 mt-1">Total tracked</div>
     </div>
   </div>
-  <div class="updated-line" id="updated-line"></div>
+  <div class="font-mono text-xs text-slate-500 mb-10" id="updated-line"></div>
 
-  <section class="group">
-    <div class="group-head">
-      <h2>Applied</h2>
-      <span class="group-count" id="applied-count"></span>
+  <section class="mb-10">
+    <div class="flex items-baseline gap-2 mb-3">
+      <h2 class="font-display text-lg font-medium text-slate-100">Applied</h2>
+      <span class="font-mono text-xs text-slate-500" id="applied-count"></span>
     </div>
-    <div class="list" id="applied-list"></div>
+    <div class="rounded-lg border border-slate-800 divide-y divide-slate-800 bg-slate-800/20 overflow-hidden" id="applied-list"></div>
   </section>
 
-  <section class="group">
-    <div class="group-head">
-      <h2>Prepared</h2>
-      <span class="group-count" id="prepared-count"></span>
+  <section class="mb-10">
+    <div class="flex items-baseline gap-2 mb-3">
+      <h2 class="font-display text-lg font-medium text-slate-100">Prepared</h2>
+      <span class="font-mono text-xs text-slate-500" id="prepared-count"></span>
     </div>
-    <div class="list" id="prepared-list"></div>
+    <div class="rounded-lg border border-slate-800 divide-y divide-slate-800 bg-slate-800/20 overflow-hidden" id="prepared-list"></div>
   </section>
 
-  <footer>source: <a href="https://github.com/deepmroot/coop-ledger">deepmroot/coop-ledger</a></footer>
+  <footer class="text-center font-mono text-xs text-slate-500 mt-6">source: <a class="text-slate-500 hover:text-slate-300 underline underline-offset-2" href="https://github.com/deepmroot/coop-ledger">deepmroot/coop-ledger</a></footer>
 </div>
 
 <script>
@@ -382,55 +99,59 @@
   }
 
   function renderRow(d) {
-    var statusClass = d.status === "applied" ? "applied" : "prepared";
+    var applied = d.status === "applied";
+    var pillClasses = applied
+      ? "bg-emerald-400/10 text-emerald-300 border-emerald-400/20"
+      : "bg-amber-300/10 text-amber-200 border-amber-300/20";
+
     var links = "";
     if (d.resumeUrl) {
-      links += '<a href="' + escapeHtml(d.resumeUrl) + '" target="_blank" rel="noopener">Resume</a>';
+      links += '<a class="text-sm text-sky-400 hover:text-sky-300 hover:underline underline-offset-2" href="' + escapeHtml(d.resumeUrl) + '" target="_blank" rel="noopener">Resume</a>';
     } else {
-      links += '<span class="missing">no resume file</span>';
+      links += '<span class="text-xs text-slate-500 italic">no resume file</span>';
     }
     if (d.coverUrl) {
-      links += '<a href="' + escapeHtml(d.coverUrl) + '" target="_blank" rel="noopener">Cover letter</a>';
+      links += '<a class="text-sm text-sky-400 hover:text-sky-300 hover:underline underline-offset-2" href="' + escapeHtml(d.coverUrl) + '" target="_blank" rel="noopener">Cover letter</a>';
     }
     if (d.applyLink) {
-      links += '<a href="' + escapeHtml(d.applyLink) + '" target="_blank" rel="noopener">Posting ↗</a>';
+      links += '<a class="text-sm text-sky-400 hover:text-sky-300 hover:underline underline-offset-2" href="' + escapeHtml(d.applyLink) + '" target="_blank" rel="noopener">Posting ↗</a>';
     } else {
-      links += '<span class="missing">apply link needed</span>';
+      links += '<span class="text-xs text-slate-500 italic">apply link needed</span>';
     }
     if (d.emailLink) {
-      links += '<a href="' + escapeHtml(d.emailLink) + '" target="_blank" rel="noopener">Confirmation email ↗</a>';
+      links += '<a class="text-sm text-sky-400 hover:text-sky-300 hover:underline underline-offset-2" href="' + escapeHtml(d.emailLink) + '" target="_blank" rel="noopener">Confirmation email ↗</a>';
     }
 
     var slug = slugify(d.company);
-    var actionCell = '<div class="action-cell">';
-    if (d.status === "applied") {
+    var actionCell = '<div class="flex flex-col items-start gap-1.5">';
+    if (applied) {
       if (d.copyMsg) {
         actionCell +=
-          '<div class="confirm-box">Confirmed this session — not yet saved.<br>' +
-          '<button class="copy-msg" data-msg="' + escapeHtml(d.copyMsg) + '">Copy message for Claude to make it permanent</button></div>';
+          '<div class="text-xs text-emerald-300 max-w-[24ch]">Confirmed this session — not yet saved.</div>' +
+          '<button class="copy-msg text-[11px] text-sky-400 underline underline-offset-2 bg-transparent border-0 p-0 cursor-pointer" data-msg="' + escapeHtml(d.copyMsg) + '">Copy message for Claude to make it permanent</button>';
       } else {
-        actionCell += '<span class="btn-status">—</span>';
+        actionCell += '<span class="text-xs text-slate-500">—</span>';
       }
     } else {
       actionCell +=
-        '<button class="check-btn" data-company="' + escapeHtml(d.company) + '" data-slug="' + slug + '">I applied — check email</button>' +
-        '<span class="btn-status" id="btn-status-' + slug + '"></span>';
+        '<button class="check-btn text-xs font-medium px-3 py-1.5 rounded-md border border-sky-400/40 bg-sky-400/10 text-sky-300 hover:bg-sky-400/20 disabled:opacity-50 disabled:cursor-default transition-colors" data-company="' + escapeHtml(d.company) + '" data-slug="' + slug + '">I applied — check email</button>' +
+        '<span class="text-xs text-slate-500 max-w-[22ch]" id="btn-status-' + slug + '"></span>';
     }
     actionCell += '</div>';
 
     return (
-      '<div class="row">' +
+      '<div class="grid grid-cols-[1.5fr_0.8fr_1.05fr_0.9fr_1.05fr] gap-4 p-4 items-start hover:bg-slate-800/50 transition-colors">' +
         '<div>' +
-          '<div class="company">' + escapeHtml(d.company) + '</div>' +
-          '<div class="role">' + escapeHtml(d.role) + '</div>' +
-          '<div class="loc">' + escapeHtml(d.location || "") + '</div>' +
+          '<div class="font-display text-base font-medium text-slate-100">' + escapeHtml(d.company) + '</div>' +
+          '<div class="text-sm text-slate-400 mt-0.5">' + escapeHtml(d.role) + '</div>' +
+          '<div class="text-xs text-slate-500 font-mono mt-1">' + escapeHtml(d.location || "") + '</div>' +
         '</div>' +
         '<div>' +
-          '<span class="pill ' + statusClass + '">' + escapeHtml(d.status) + '</span>' +
-          (d.date ? '<div class="date">' + escapeHtml(d.date) + '</div>' : '') +
+          '<span class="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wide px-2 py-1 rounded border ' + pillClasses + '"><span class="w-1.5 h-1.5 rounded-full bg-current"></span>' + escapeHtml(d.status) + '</span>' +
+          (d.date ? '<div class="font-mono text-xs text-slate-500 mt-1.5">' + escapeHtml(d.date) + '</div>' : '') +
         '</div>' +
-        '<div class="evidence">' + escapeHtml(d.evidence || "") + '</div>' +
-        '<div class="links">' + links + '</div>' +
+        '<div class="text-sm text-slate-400">' + escapeHtml(d.evidence || "") + '</div>' +
+        '<div class="flex flex-col items-start gap-1.5">' + links + '</div>' +
         actionCell +
       '</div>'
     );
@@ -446,10 +167,11 @@
     document.getElementById("applied-count").textContent = applied.length + (applied.length === 1 ? " company" : " companies");
     document.getElementById("prepared-count").textContent = prepared.length + (prepared.length === 1 ? " company" : " companies");
 
+    var emptyClasses = "p-10 text-center text-slate-500 text-sm";
     document.getElementById("applied-list").innerHTML =
-      applied.length ? applied.map(renderRow).join("") : '<div class="empty">Nothing applied yet.</div>';
+      applied.length ? applied.map(renderRow).join("") : '<div class="' + emptyClasses + '">Nothing applied yet.</div>';
     document.getElementById("prepared-list").innerHTML =
-      prepared.length ? prepared.map(renderRow).join("") : '<div class="empty">Nothing queued.</div>';
+      prepared.length ? prepared.map(renderRow).join("") : '<div class="' + emptyClasses + '">Nothing queued.</div>';
 
     document.getElementById("updated-line").textContent =
       DATA.length + " application" + (DATA.length === 1 ? "" : "s") + " tracked.";
