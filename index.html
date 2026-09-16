@@ -6,122 +6,125 @@
 <title>The Co-op Ledger</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
+  /* Deliberately single-theme (dark) — every color is a fixed value below,
+     nothing deferred to the host's light/dark preference. */
   :root {
-    --bg: #f6f7f9;
-    --surface: #ffffff;
-    --surface-2: #fbfbfc;
-    --border: #dfe3e8;
-    --text: #161a23;
-    --text-muted: #5c6472;
-    --text-faint: #8a91a0;
-    --accent: #2e5c8a;
-    --accent-soft: #e8f0f8;
-    --good: #1f7a50;
-    --good-soft: #e4f5ec;
-    --warn: #b4720c;
-    --warn-soft: #fbf1df;
-    --shadow: 0 1px 2px rgba(20, 24, 34, 0.04);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0e1116;
-      --surface: #161b22;
-      --surface-2: #12161c;
-      --border: #272e38;
-      --text: #e7eaef;
-      --text-muted: #9ba3b0;
-      --text-faint: #6b7280;
-      --accent: #86b6e6;
-      --accent-soft: #1b2a3a;
-      --good: #4cc98a;
-      --good-soft: #16301f;
-      --warn: #e8b34d;
-      --warn-soft: #332711;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
+    --bg: #130f0c;
+    --surface: #1d1712;
+    --surface-2: #251e17;
+    --border: #382e23;
+    --text: #ece3d4;
+    --text-muted: #ab9c87;
+    --text-faint: #6f6252;
+    --accent: #e3a63f;
+    --accent-soft: #2c2014;
+    --good: #8fbb74;
+    --good-soft: #1d2617;
+    --warn: #cf8c5a;
+    --warn-soft: #2c2014;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.18);
   }
 
   * { box-sizing: border-box; }
   body {
     background: var(--bg);
+    background-image: radial-gradient(circle at 12% -10%, rgba(227, 166, 63, 0.05), transparent 45%);
     color: var(--text);
     margin: 0;
     font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
   .wrap {
-    max-width: 920px;
+    max-width: 940px;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 56px 24px 90px;
   }
 
   header.page-head {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 8px;
+    padding-bottom: 22px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header.page-head::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 46px;
+    height: 3px;
+    background: var(--accent);
   }
   .eyebrow {
     font-family: "IBM Plex Mono", monospace;
     font-size: 12px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--accent);
   }
   h1 {
-    font-family: "Source Serif 4", Georgia, serif;
-    font-weight: 700;
-    font-size: 38px;
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 620;
+    font-size: 44px;
     margin: 0;
     text-wrap: balance;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    color: var(--text);
   }
   .subhead {
     color: var(--text-muted);
     font-size: 15px;
-    max-width: 65ch;
+    max-width: 62ch;
   }
 
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    margin: 28px 0 36px;
+    margin: 0 0 36px;
   }
   .stat {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 18px;
+    border-top: 2px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 18px 16px;
     box-shadow: var(--shadow);
   }
   .stat .num {
     font-family: "IBM Plex Mono", monospace;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 500;
     font-variant-numeric: tabular-nums;
     line-height: 1.1;
+    color: var(--text);
   }
   .stat .label {
     font-size: 12.5px;
     color: var(--text-muted);
-    margin-top: 4px;
+    margin-top: 5px;
   }
+  .stat.applied { border-top-color: var(--good); }
   .stat.applied .num { color: var(--good); }
+  .stat.prepared { border-top-color: var(--warn); }
   .stat.prepared .num { color: var(--warn); }
+  .stat.total { border-top-color: var(--accent); }
 
   .updated-line {
     font-family: "IBM Plex Mono", monospace;
     font-size: 12px;
     color: var(--text-faint);
-    margin-bottom: 40px;
+    margin-bottom: 44px;
   }
 
-  section.group { margin-bottom: 40px; }
+  section.group { margin-bottom: 44px; }
   .group-head {
     display: flex;
     align-items: baseline;
@@ -129,10 +132,12 @@
     margin-bottom: 14px;
   }
   .group-head h2 {
-    font-family: "Source Serif 4", Georgia, serif;
-    font-size: 20px;
-    font-weight: 600;
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+    font-size: 21px;
+    font-weight: 560;
     margin: 0;
+    color: var(--text);
   }
   .group-count {
     font-family: "IBM Plex Mono", monospace;
@@ -143,34 +148,37 @@
   .list {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     box-shadow: var(--shadow);
   }
   .row {
     display: grid;
-    grid-template-columns: 1.7fr 0.9fr 1.3fr 1.1fr;
+    grid-template-columns: 1.5fr 0.8fr 1.05fr 0.9fr 1.05fr;
     gap: 16px;
-    padding: 16px 20px;
+    padding: 17px 20px;
     align-items: start;
+    border-left: 2px solid transparent;
   }
   .row + .row { border-top: 1px solid var(--border); }
-  .row:hover { background: var(--surface-2); }
+  .row:hover { background: var(--surface-2); border-left-color: var(--accent); }
 
   .company {
-    font-family: "Source Serif 4", Georgia, serif;
-    font-weight: 600;
-    font-size: 16.5px;
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 560;
+    font-size: 17px;
+    color: var(--text);
   }
   .role {
     color: var(--text-muted);
     font-size: 13.5px;
-    margin-top: 2px;
+    margin-top: 3px;
   }
   .loc {
     color: var(--text-faint);
-    font-size: 12.5px;
-    margin-top: 4px;
+    font-size: 12px;
+    margin-top: 5px;
     font-family: "IBM Plex Mono", monospace;
   }
 
@@ -179,12 +187,13 @@
     align-items: center;
     gap: 6px;
     font-family: "IBM Plex Mono", monospace;
-    font-size: 11.5px;
-    letter-spacing: 0.03em;
+    font-size: 11px;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     padding: 4px 9px;
-    border-radius: 999px;
+    border-radius: 3px;
     width: fit-content;
+    border: 1px solid transparent;
   }
   .pill::before {
     content: "";
@@ -193,13 +202,13 @@
     border-radius: 50%;
     background: currentColor;
   }
-  .pill.applied { background: var(--good-soft); color: var(--good); }
-  .pill.prepared { background: var(--warn-soft); color: var(--warn); }
+  .pill.applied { background: var(--good-soft); color: var(--good); border-color: rgba(143, 187, 116, 0.25); }
+  .pill.prepared { background: var(--warn-soft); color: var(--warn); border-color: rgba(207, 140, 90, 0.25); }
   .date {
     font-family: "IBM Plex Mono", monospace;
     font-size: 12px;
     color: var(--text-faint);
-    margin-top: 6px;
+    margin-top: 7px;
   }
 
   .evidence {
@@ -231,14 +240,9 @@
     font-family: "IBM Plex Mono", monospace;
     font-size: 11.5px;
     color: var(--text-faint);
-    margin-top: 20px;
+    margin-top: 24px;
   }
   footer a { color: var(--text-faint); }
-
-  @media (max-width: 720px) {
-    .row { grid-template-columns: 1fr; gap: 8px; }
-    .stats { grid-template-columns: 1fr; }
-  }
 
   a:focus-visible, button:focus-visible {
     outline: 2px solid var(--accent);
@@ -252,9 +256,6 @@
     font-size: 14px;
   }
 
-  .row {
-    grid-template-columns: 1.5fr 0.8fr 1.05fr 0.9fr 1.05fr;
-  }
   .action-cell {
     display: flex;
     flex-direction: column;
@@ -266,13 +267,14 @@
     font-size: 12.5px;
     font-weight: 500;
     padding: 6px 12px;
-    border-radius: 6px;
+    border-radius: 5px;
     border: 1px solid var(--accent);
     background: var(--accent-soft);
     color: var(--accent);
     cursor: pointer;
   }
-  .check-btn:disabled { opacity: 0.6; cursor: default; }
+  .check-btn:hover { background: rgba(227, 166, 63, 0.18); }
+  .check-btn:disabled { opacity: 0.55; cursor: default; }
   .btn-status {
     font-size: 11.5px;
     color: var(--text-faint);
@@ -297,7 +299,8 @@
   }
 
   @media (max-width: 780px) {
-    .row { grid-template-columns: 1fr; }
+    .row { grid-template-columns: 1fr; gap: 8px; }
+    .stats { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -319,7 +322,7 @@
       <div class="num" id="stat-prepared">–</div>
       <div class="label">Prepared, not yet applied</div>
     </div>
-    <div class="stat">
+    <div class="stat total">
       <div class="num" id="stat-total">–</div>
       <div class="label">Total tracked</div>
     </div>
@@ -342,7 +345,7 @@
     <div class="list" id="prepared-list"></div>
   </section>
 
-  <footer>Updated 2026-09-15 (Lyft confirmed) &middot; source: <a href="https://github.com/deepmroot/coop-ledger">deepmroot/coop-ledger</a></footer>
+  <footer>source: <a href="https://github.com/deepmroot/coop-ledger">deepmroot/coop-ledger</a></footer>
 </div>
 
 <script>
