@@ -488,6 +488,11 @@
   // before we trust a "match" (Gmail's search silently broadens to loosely
   // related results when a strict query finds nothing — this is the safety
   // net against that).
+  // Single-word, genuinely-present terms only. A multi-word phrase here (or
+  // in the search query below) silently fails whenever the real email omits
+  // one of the words — e.g. "intact financial" never matches Intact's real
+  // confirmation email, which only ever says "Intact", never "Financial
+  // Corporation". Verified against real inbox content before narrowing.
   var MATCH_TERMS = {
     "Visier Solutions": "visier",
     "Kinaxis": "kinaxis",
@@ -496,8 +501,8 @@
     "Atlassian": "atlassian",
     "Remarcable": "remarcable",
     "AMD": "amd",
-    "Intact Financial Corporation": "intact financial",
-    "Trench Group": "trench group",
+    "Intact Financial Corporation": "intact",
+    "Trench Group": "trench",
     "Lyft": "lyft"
   };
 
@@ -522,9 +527,12 @@
       statusEl.textContent = "Checking your email…";
       try {
         var matchTerm = (MATCH_TERMS[company] || company).toLowerCase();
-        var q = '"' + company + '" (application OR applying OR "thank you for" OR received OR interview OR assessment) newer_than:5d -from:me';
+        // Unquoted, single-word term — a quoted full legal company name
+        // (e.g. "Intact Financial Corporation") almost never appears verbatim
+        // in a real ATS confirmation email and silently returns zero results.
+        var q = matchTerm + ' (application OR applying OR "thank you for" OR received OR interview OR assessment) newer_than:7d -from:me';
         var listResp = await fetch(
-          "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=" + encodeURIComponent(q),
+          "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=8&q=" + encodeURIComponent(q),
           { headers: { Authorization: "Bearer " + token } }
         );
         var listJson = await listResp.json();
