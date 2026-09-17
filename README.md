@@ -2,7 +2,7 @@
 
 Live tracker for Mandeep Singh's Winter/Summer 2027 co-op applications.
 
-Published at: https://deepmroot.github.io/coop-ledger/
+Published at: https://coop-ledger-five.vercel.app
 
 Source of truth for the tailored resumes/cover letters and generation scripts is
 [deepmroot/jobapply](https://github.com/deepmroot/jobapply) — this repo is just
