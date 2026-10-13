@@ -199,6 +199,27 @@
     return "Posted " + days + " days ago";
   }
 
+  function closesBadge(closes) {
+    if (!closes) return "";
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var closeDate = new Date(closes + "T00:00:00");
+    var days = Math.round((closeDate - today) / 86400000);
+    var text, classes;
+    if (days < 0) {
+      text = "Closed"; classes = "bg-slate-500/10 text-slate-400 border-slate-500/20";
+    } else if (days === 0) {
+      text = "Closes today"; classes = "bg-red-500/15 text-red-300 border-red-500/30";
+    } else if (days <= 3) {
+      text = "Closes in " + days + "d"; classes = "bg-red-500/15 text-red-300 border-red-500/30";
+    } else if (days <= 7) {
+      text = "Closes in " + days + "d"; classes = "bg-amber-400/15 text-amber-300 border-amber-400/30";
+    } else {
+      text = "Closes " + closes; classes = "bg-slate-500/10 text-slate-400 border-slate-500/20";
+    }
+    return ' <span class="inline-flex items-center text-[10px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded border ' + classes + ' align-middle">' + text + '</span>';
+  }
+
   function renderRow(d) {
     var settled = d.status === "applied" || d.status === "interview";
     var pillClasses =
@@ -261,7 +282,7 @@
     return (
       '<div class="grid grid-cols-[1.5fr_0.8fr_1.05fr_0.9fr_1.05fr] gap-4 p-4 items-start hover:bg-slate-800/50 transition-colors">' +
         '<div>' +
-          '<div class="font-display text-base font-medium text-slate-100">' + escapeHtml(d.company) + '</div>' +
+          '<div class="font-display text-base font-medium text-slate-100">' + escapeHtml(d.company) + closesBadge(d.closes) + '</div>' +
           '<div class="text-sm text-slate-400 mt-0.5">' + escapeHtml(d.role) + '</div>' +
           '<div class="text-xs text-slate-500 font-mono mt-1">' + escapeHtml(d.location || "") + '</div>' +
           '<div class="text-xs font-mono mt-0.5 ' + postedClasses + '">' + postedText + '</div>' +
@@ -282,6 +303,12 @@
     var applied = DATA.filter(function (r) { return r.status === "applied"; });
     var rejected = DATA.filter(function (r) { return r.status === "rejected"; });
     var prepared = DATA.filter(function (r) { return r.status !== "applied" && r.status !== "interview" && r.status !== "rejected"; });
+    prepared.sort(function (a, b) {
+      if (a.closes && b.closes) return a.closes < b.closes ? -1 : a.closes > b.closes ? 1 : 0;
+      if (a.closes) return -1;
+      if (b.closes) return 1;
+      return 0;
+    });
 
     document.getElementById("stat-interview").textContent = interview.length;
     document.getElementById("stat-applied").textContent = applied.length;
