@@ -199,6 +199,35 @@
     return "Posted " + days + " days ago";
   }
 
+  // Fit scoring: flags AI/agentic + software/backend roles, bonus for
+  // Vancouver/BC area or remote-Canada. Pure keyword heuristic, not a model
+  // call — cheap, deterministic, runs client-side on every render.
+  var AI_RE = /\b(ai|ml|machine learning|agent|agentic|llm|genai|artificial intelligence|data scien)/i;
+  var SWE_RE = /\b(software|backend|back-end|full.?stack|developer|engineer|systems? (analyst|developer))\b/i;
+  var BC_RE = /\b(vancouver|burnaby|richmond|surrey|coquitlam|kamloops|victoria|kelowna|langley|delta|abbotsford),?\s*bc\b|british columbia/i;
+  var REMOTE_RE = /\bremote\b/i;
+
+  function fitScore(d) {
+    var role = d.role || "";
+    var loc = d.location || "";
+    var score = 0;
+    if (AI_RE.test(role)) score += 3;
+    if (SWE_RE.test(role)) score += 2;
+    if (BC_RE.test(loc)) score += 2;
+    else if (REMOTE_RE.test(loc)) score += 1;
+    return score;
+  }
+
+  function fitBadge(score) {
+    if (score >= 5) {
+      return ' <span class="inline-flex items-center text-[10px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded border bg-pink-500/15 text-pink-300 border-pink-500/30 align-middle">★ Must Apply</span>';
+    }
+    if (score >= 3) {
+      return ' <span class="inline-flex items-center text-[10px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded border bg-sky-500/10 text-sky-300 border-sky-500/25 align-middle">Strong Fit</span>';
+    }
+    return "";
+  }
+
   function closesBadge(closes) {
     if (!closes) return "";
     var today = new Date();
@@ -282,7 +311,7 @@
     return (
       '<div class="grid grid-cols-[1.5fr_0.8fr_1.05fr_0.9fr_1.05fr] gap-4 p-4 items-start hover:bg-slate-800/50 transition-colors">' +
         '<div>' +
-          '<div class="font-display text-base font-medium text-slate-100">' + escapeHtml(d.company) + closesBadge(d.closes) + '</div>' +
+          '<div class="font-display text-base font-medium text-slate-100">' + escapeHtml(d.company) + fitBadge(fitScore(d)) + closesBadge(d.closes) + '</div>' +
           '<div class="text-sm text-slate-400 mt-0.5">' + escapeHtml(d.role) + '</div>' +
           '<div class="text-xs text-slate-500 font-mono mt-1">' + escapeHtml(d.location || "") + '</div>' +
           '<div class="text-xs font-mono mt-0.5 ' + postedClasses + '">' + postedText + '</div>' +
@@ -304,6 +333,8 @@
     var rejected = DATA.filter(function (r) { return r.status === "rejected"; });
     var prepared = DATA.filter(function (r) { return r.status !== "applied" && r.status !== "interview" && r.status !== "rejected"; });
     prepared.sort(function (a, b) {
+      var fa = fitScore(a), fb = fitScore(b);
+      if (fa !== fb) return fb - fa;
       if (a.closes && b.closes) return a.closes < b.closes ? -1 : a.closes > b.closes ? 1 : 0;
       if (a.closes) return -1;
       if (b.closes) return 1;
