@@ -1,0 +1,140 @@
+%-------------------------
+% Resume in Latex
+% Mandeep Singh
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.65in}
+\addtolength{\textheight}{1.25in}
+
+\urlstyle{same}
+\raggedright
+\raggedbottom
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\titlerule \vspace{-6pt}]
+
+\pdfgentounicode=1
+
+\newcommand{\resumeItem}[1]{
+  \item \small{#1 \vspace{-1pt}}
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \item
+  \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & #2 \\
+    \textit{\small #3} & \textit{\small #4}
+  \end{tabular*}\vspace{-6pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}, topsep=0pt]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}\vspace{-2pt}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.2in, topsep=0pt, itemsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-6pt}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\LARGE Mandeep Singh} \\ \vspace{2pt}
+    \small 778-538-2869 $|$
+    \href{mailto:mandeepsinghwani@gmail.com}{mandeepsinghwani@gmail.com} $|$
+    Kamloops, BC $|$
+    \href{https://mandeep.work}{mandeep.work} $|$
+    \href{https://www.linkedin.com/in/mandeep-singh-b855972a7/}{LinkedIn} $|$
+    \href{https://github.com/deepmroot}{GitHub}
+\end{center}
+
+\section{Summary}
+\begin{itemize}[leftmargin=0.15in, label={}, topsep=0pt, itemsep=0pt]
+\item \small{
+Third-year Computing Science co-op student with direct production backend experience operating an AI API gateway end to end. Seeking the Winter 2027 Backend Engineer Intern role at StackAdapt.
+}
+\end{itemize}
+
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Thompson Rivers University}{Kamloops, BC}
+    {Bachelor of Computing Science (Co-op Program)}{2023 -- Present}
+    \resumeItemListStart
+      \resumeItem{Third-year student focused on software engineering, information systems, and computer networks}
+      \resumeItem{Relevant coursework: Computer Networks, Operating Systems, Web-Based Information Systems}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Experience}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Co-Founder \& Software Engineer}{July 2025 – Present}
+    {InferenceSaver}{Next.js, React, TypeScript, Convex, Stripe}
+    \resumeItemListStart
+      \resumeItem{Co-founded and developed a production \textbf{AI API gateway and multimodal generation platform} providing unified access to language, image, video, music, and voice models for \textbf{129 registered users}}
+      \resumeItem{Built product interfaces, backend workflows, authentication, payments, affiliate systems, and model integrations supporting \textbf{\$5.6K+ in confirmed platform credit allocations across 60 top-ups}}
+      \resumeItem{Diagnosed a Stripe idempotency defect affecting \textbf{8 of 14 completed checkouts}, implemented retry-safe payment writes, and restored music/voice integrations used for \textbf{88 production generation jobs}}
+    \resumeItemListEnd
+
+  \resumeSubheading
+    {Co-Founder \& Technical Lead}{March 2026 – Present}
+    {BecomeAfish}{Next.js, TypeScript, PostgreSQL, Stripe}
+    \resumeItemListStart
+      \resumeItem{Built and launched a booking and payments platform supporting \textbf{108 registered accounts} and \textbf{133 scheduled lessons}, processing nearly \textbf{CAD \$5K within ~2 months} of commercial operation}
+      \resumeItem{Engineered geographic instructor matching, role-based portals, and Stripe webhooks; automated \textbf{8 workflows} covering payroll batching, reconciliation, and notifications}
+      \resumeItem{Built campaign attribution, AI-assisted blog/newsletter automation, social publishing integrations, and technical SEO tooling; implemented analytics tracking \textbf{4,967 pageviews over 61 days}}
+    \resumeItemListEnd
+
+  \resumeSubheading
+    {Systems Analyst Intern}{June 2026 – Present}
+    {City of Merritt}{Merritt, BC}
+    \resumeItemListStart
+      \resumeItem{Managed \textbf{163 assigned IT tickets}, with \textbf{135 completed}, spanning Windows troubleshooting, application support, access management and hardware}
+      \resumeItem{Handled \textbf{87 onboarding/offboarding-related tickets} covering employee accounts, permissions and equipment provisioning and collection}
+      \resumeItem{Developed a \textbf{CityWide REST API runbook} through curl and PowerShell testing, documenting authentication, API constraints and onboarding/offboarding workflows}
+    \resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\section{Projects}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {\href{https://www.agent-memory.dev/}{AgentMemory}}{28,275 Stars / 2,454 Forks — GitHub}
+    {Open Source Contributor}{\href{https://github.com/rohitg00/agentmemory}{github.com/rohitg00/agentmemory}}
+    \resumeItemListStart
+      \resumeItem{Contributor since day one on \textbf{AgentMemory}, a persistent memory layer for AI coding agents (Claude, Cursor, Copilot, Codex) ranked \#1 on real-world memory benchmarks}
+      \resumeItem{Project has grown to \textbf{28,275+ GitHub stars} and \textbf{2,454 forks}; contributed through its early growth as an active TypeScript codebase contributor}
+    \resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\vspace{-4pt}
+\section{Technical Skills}
+\vspace{2pt}
+\small{
+\textbf{Languages:} TypeScript, JavaScript, Python, Java, SQL, Rust, PowerShell, HTML/CSS \\
+\textbf{Frameworks:} Next.js, React, Node.js, Prisma \\
+\textbf{Backend \& Data:} Convex, PostgreSQL, Supabase, REST APIs, Webhooks, OAuth, RBAC, Session Authentication \\
+\textbf{Cloud \& Development:} Vercel, Git, GitHub, Docker, Linux, CI/CD, Automated Testing, Scheduled Jobs \\
+\textbf{Platforms \& Integrations:} Stripe, Resend, Twilio, Google APIs, Meta Graph API, GA4 \\
+\textbf{IT Systems:} Windows Administration, Microsoft 365, SmartDeploy, BitLocker, Device Deployment, Identity \& Access Management
+}
+
+\end{document}
