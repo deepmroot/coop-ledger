@@ -176,7 +176,7 @@
     { company: "Celestica", role: "Student Intern, Operations Technology & AI Solutions", location: "Toronto, ON", posted: "2026-09-23T05:46:45Z", status: "prepared", evidence: "Docs ready, not yet submitted. Sourced from LinkedIn job alert 2026-09-23", applyLink: "https://www.linkedin.com/comm/jobs/view/4469974857/", resumeUrl: "applications/Mandeep_Singh_CelesticaOpsTechAI_Resume.pdf", coverUrl: "applications/Mandeep_Singh_CelesticaOpsTechAI_Cover_Letter.pdf" },
     { company: "SAP (Agile Developer, Business Data Cloud)", role: "SAP iXp Intern - Agile Developer, Business Data Cloud", location: "Vancouver, BC", status: "applied", date: "2026-10-09", evidence: "Marked applied manually — this company doesn't send confirmation emails.", applyLink: "", resumeUrl: "applications/Mandeep_Singh_SAPAgileBDC_Resume.pdf", coverUrl: "applications/Mandeep_Singh_SAPAgileBDC_Cover_Letter.pdf" },
     { company: "BMO Financial Group (Quantitative Developer, GAM/Alpha Research)", role: "Quantitative Developer (Alpha Research Team) - GAM - Co-op", location: "Toronto, ON", status: "prepared", closes: "2026-10-16", date: "", evidence: "Sourced from TRU Career Connections list (fwd by co-op coordinator Kris Kadaleevanam, 2026-09-23). Tailored resume/cover letter not yet generated; apply via TRU Career Connections, Job ID 60166. Application closes 2026-10-16. Different team/req than the BMO Software Developer, Winter 2027 role already applied to.", applyLink: "https://bmo.wd3.myworkdayjobs.com/Campus/job/Toronto-ON-CAN/Quantitative-Developer--Alpha-Research-Team----GAM--Summer-2027--Co-op-Internship----12-months_R260026715", resumeUrl: "applications/Mandeep_Singh_BMOQuantDeveloper_Resume.pdf", coverUrl: "applications/Mandeep_Singh_BMOQuantDeveloper_Cover_Letter.pdf", symplicityLink: "https://tru-csm.symplicity.com/students/app/jobs/detail/8af63e6a63b34c54c5dcc0a3265a6b41" },
-    { company: "D-Pace, Inc. (Machine Learning)", role: "Machine Learning Co-op", location: "Nelson, BC", status: "prepared", closes: "2026-10-19", date: "", evidence: "Sourced from TRU Career Connections list (fwd by co-op coordinator Kris Kadaleevanam, 2026-09-23). Tailored resume/cover letter not yet generated; apply via TRU Career Connections, Job ID 60184. Application closes 2026-10-19.", applyLink: "https://www.d-pace.com/resources/careers", resumeUrl: "applications/Mandeep_Singh_DPaceML_Resume.pdf", coverUrl: "applications/Mandeep_Singh_DPaceML_Cover_Letter.pdf", symplicityLink: "https://tru-csm.symplicity.com/students/app/jobs/detail/4489dcdc6127ceb31aecfd6c1e1b4bb1" },
+    { company: "D-Pace, Inc. (Machine Learning)", role: "Machine Learning Co-op", location: "Nelson, BC", status: "applied", date: "2026-10-14", evidence: "Confirmed — info@d-pace.com, \"We have received your application for Machine Learning COOP (2026-09)\"", applyLink: "https://www.d-pace.com/resources/careers", resumeUrl: "applications/Mandeep_Singh_DPaceML_Resume.pdf", coverUrl: "applications/Mandeep_Singh_DPaceML_Cover_Letter.pdf", symplicityLink: "https://tru-csm.symplicity.com/students/app/jobs/detail/4489dcdc6127ceb31aecfd6c1e1b4bb1", emailLink: "https://mail.google.com/mail/u/0/#all/1a13ba062b364083" },
     { company: "Google", role: "Student Researcher, BS/MS, Winter-Summer 2027", location: "Toronto, ON", posted: "2026-09-24T23:46:47Z", status: "prepared", evidence: "Docs ready, not yet submitted. Sourced from LinkedIn job alert 2026-09-24", applyLink: "https://www.linkedin.com/comm/jobs/view/4465783415/", resumeUrl: "applications/Mandeep_Singh_GoogleStudentResearcher_Resume.pdf", coverUrl: "applications/Mandeep_Singh_GoogleStudentResearcher_Cover_Letter.pdf" },
     { company: "AbaData", role: "Student Software Developer - Spring 2027", location: "Calgary, AB", posted: "2026-09-24T02:46:46Z", status: "prepared", evidence: "Docs ready, not yet submitted. Sourced from LinkedIn job alert 2026-09-24", applyLink: "https://www.linkedin.com/comm/jobs/view/4470630124/", resumeUrl: "applications/Mandeep_Singh_AbaDataStudentDev_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AbaDataStudentDev_Cover_Letter.pdf" },
     { company: "Delta Controls", role: "Junior Developer Co-op", location: "Surrey, BC", posted: "2026-09-24T01:46:48Z", status: "applied", evidence: "Marked applied manually — this company doesn't send confirmation emails.", applyLink: "https://www.linkedin.com/comm/jobs/view/4469619106/", resumeUrl: "applications/Mandeep_Singh_DeltaControlsJuniorDev_Resume.pdf", coverUrl: "applications/Mandeep_Singh_DeltaControlsJuniorDev_Cover_Letter.pdf" },
@@ -454,11 +454,19 @@
     "Intact Financial Corporation": "intact",
     "Trench Group": "trench",
     "Lyft": "lyft",
+    // NOTE: shared by 6 real, distinct GDMSI co-op postings (this one plus
+    // the Software Engineering Developer, Mobile Domain System Engineering,
+    // Systems Integration/V&V x2, and System of Systems Engineering entries
+    // below) -- the check-email button can't tell them apart from a
+    // confirmation email alone. Verify by hand which one(s) confirmed.
     "General Dynamics Mission Systems–Canada": "general dynamics",
     "Later": "later",
     "Amazon": "amazon",
     "SECURE": "secure",
     "Bree": "bree",
+    // NOTE: shared by 3 real ARC Resources postings (this one plus Data
+    // Services and Information Management below) -- can't tell apart from a
+    // confirmation alone. Verify by hand which one(s) confirmed.
     "ARC Resources Ltd.": "arc resources",
     "Loblaw Digital": "loblaw",
     "QuadReal Property Group": "quadreal",
@@ -523,8 +531,77 @@
     "TC Energy": "tc energy",
     "Activision (Summer Game Engineering)": "activision",
     "Tenstorrent": "tenstorrent",
+    // NOTE: shared by 4 real, distinct L3Harris co-op postings (this one
+    // plus FPGA Software Tool Developer, Full Stack Developer, and
+    // Software Engineering Co-op below) -- can't tell apart from a
+    // confirmation alone. Verify by hand which one(s) confirmed.
     "L3Harris (FPGA Designer)": "l3harris",
-    "Stripe": "stripe"
+    "Stripe": "stripe",
+    "Scotiabank (Trade Floor Technology Consultant, Req 59053)": "scotiabank",
+    "Scotiabank (Trade Floor Technology Consultant, Req 59052)": "scotiabank",
+    "Scotiabank (Data & Operational Initiatives)": "scotiabank",
+    "BDO Canada LLP (Data & Analytics)": "bdo",
+    "BDO Canada LLP (Full-Stack Developer)": "bdo",
+    "BDO Canada LLP (DevOps Engineer)": "bdo",
+    "BDO Canada LLP (Technology - BizApps)": "bdo",
+    "Nokia (Incubation Developer Student)": "nokia",
+    "Nokia (Customer Applications Engineering)": "nokia",
+    "General Dynamics Mission Systems–Canada (Mobile Domain System Engineering)": "general dynamics",
+    "General Dynamics Mission Systems–Canada (Systems Integration, V&V)": "general dynamics",
+    "General Dynamics Mission Systems–Canada (Systems Integration, V&V, Req 60169)": "general dynamics",
+    "General Dynamics Mission Systems–Canada (System of Systems Engineering, Req 60168)": "general dynamics",
+    "Autodesk": "autodesk",
+    "Lumentum Canada": "lumentum",
+    "GIRO Inc.": "giro",
+    "Sun Life (Data Governance Analyst)": "sun life",
+    "Sun Life (Analytics & Technology Systems)": "sun life",
+    "MDA Space (Cyber Security Analyst)": "mda space",
+    "Trans Mountain (IT, Enterprise & Business Solutions)": "trans mountain",
+    "Elk Valley Resources - EVR (a Glencore Company)": "elk valley",
+    "Shoppers Drug Mart Pharmaprix": "pharmaprix",
+    "Aritzia": "aritzia",
+    "Nexus Energy": "nexus energy",
+    // NOTE: shared by both real 4AG Robotics postings -- confirmed via a
+    // real "Thank you for applying to 4AG Robotics Inc." receipt
+    // (no-reply@ats.rippling.com, 2026-10-14), but the button can't tell
+    // which of the two reqs (AI Co-op Student vs Robotics Software Co-op)
+    // it belongs to. Verify by hand which one to mark applied.
+    "4AG Robotics (AI Co-op Student)": "4ag",
+    "4AG Robotics (Robotics Software Co-op)": "4ag",
+    "L3Harris (FPGA Software Tool Developer)": "l3harris",
+    "L3Harris (Full Stack Developer)": "l3harris",
+    "L3Harris (Software Engineering Co-op)": "l3harris",
+    "ARC Resources Ltd. (Information Management)": "arc resources",
+    // NOTE: "EQ Bank" and "Equitable Bank" below are the same real
+    // employer (Equitable Bank operates as EQ Bank; both postings use the
+    // same Lever org, jobs.lever.co/eqbank) -- same term, same caveat as
+    // the other shared-company groups above.
+    "EQ Bank": "eq bank",
+    "Equitable Bank": "eq bank",
+    "Ciena": "ciena",
+    "Workday": "workday",
+    "The Semios Group": "semios",
+    "Moment Energy": "moment energy",
+    "Semtech": "semtech",
+    "Khan Academy": "khan academy",
+    // "Harvey" is a common word/name -- real Ashby confirmation emails from
+    // this company do self-identify as "Harvey", but double-check the
+    // verified snippet actually looks like a real ATS receipt, not a false
+    // positive, before trusting a match.
+    "Harvey": "harvey",
+    // NOTE: same match term as the original "Kinaxis" entry above (both are
+    // real Kinaxis postings) -- can't tell apart from a confirmation alone.
+    "Kinaxis (AI/ML Researcher)": "kinaxis",
+    "SAP (Agile Developer, Business Data Cloud)": "sap",
+    // NOTE: same match term as the original "BMO" entry above (distinct
+    // req/team) -- can't tell apart from a confirmation alone.
+    "BMO Financial Group (Quantitative Developer, GAM/Alpha Research)": "bmo",
+    "D-Pace, Inc. (Machine Learning)": "d-pace",
+    // NOTE: shared by both Dawson Group postings (same employer, two co-op
+    // reqs) -- applied via TRU Career Connections directly, not Gmail, so
+    // this is mostly for consistency/future-proofing rather than the button.
+    "The Dawson Group (Systems Developer)": "dawson group",
+    "The Dawson Group (AI Developer)": "dawson group"
   };
 
   function findDataEntry(company) {
