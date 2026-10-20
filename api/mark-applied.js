@@ -53,7 +53,13 @@ function updateLedgerHtml(content, company, status, date, evidence, emailLink) {
       // and truncates mid-string, corrupting the line.
       const STR = '(?:[^"\\\\]|\\\\.)*';
       l = l.replace(new RegExp(`status:\\s*"${STR}"`), `status: "${status}"`);
-      l = l.replace(new RegExp(`date:\\s*"${STR}"`), `date: "${date}"`);
+      const dateRe = new RegExp(`date:\\s*"${STR}"`);
+      if (dateRe.test(l)) {
+        l = l.replace(dateRe, `date: "${date}"`);
+      } else {
+        // Newly prepared rows do not have a date property yet.
+        l = l.replace(/(status:\s*"(?:[^"\\]|\\.)*")/, `$1, date: "${date}"`);
+      }
       l = l.replace(new RegExp(`evidence:\\s*"${STR}"`), `evidence: "${escapeJsString(evidence)}"`);
       if (emailLink) {
         const emailLinkRe = new RegExp(`emailLink:\\s*"${STR}"`);
