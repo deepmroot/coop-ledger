@@ -21,45 +21,65 @@
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
-<body class="bg-slate-900 text-slate-200 font-sans antialiased">
+<body class="bg-[#0b1020] text-slate-200 font-sans antialiased">
+<style>
+  body { background-image: radial-gradient(60rem 30rem at 15% -10%, rgba(56,189,248,0.10), transparent 60%), radial-gradient(50rem 30rem at 95% 0%, rgba(52,211,153,0.07), transparent 60%); background-repeat: no-repeat; }
+  @keyframes livePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.75); } }
+  .live-dot { animation: livePulse 1.6s ease-in-out infinite; }
+  .heat-cell { width: 14px; height: 14px; border-radius: 3px; }
+  .clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+</style>
 
-<div class="max-w-4xl mx-auto px-6 py-14">
-  <header class="border-b border-slate-800 pb-6 mb-8">
-    <div class="font-mono text-xs uppercase tracking-widest text-sky-400 mb-2">Mandeep Singh &middot; Co-op Search</div>
-    <h1 class="font-display text-4xl font-semibold text-slate-100 text-balance">The Co-op Ledger</h1>
-    <p class="mt-2 text-sm text-slate-400 max-w-xl">Record of every Winter/Summer 2027 co-op application — status, tailored documents, and the original posting, in one place.</p>
+<div class="max-w-6xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
+  <header class="pb-8 mb-8 border-b border-white/5">
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+      <div class="font-mono text-xs uppercase tracking-[0.2em] text-sky-400">Mandeep Singh &middot; Co-op Search 2027</div>
+      <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wide text-emerald-300"><span class="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span id="live-line">auto-applying</span></span>
+    </div>
+    <h1 class="font-display text-5xl sm:text-6xl font-semibold tracking-tight text-white text-balance">The <span class="whitespace-nowrap">Co-op</span> Ledger</h1>
+    <p class="mt-3 text-base text-slate-400 max-w-2xl">Every Winter/Summer 2027 co-op application, with its status, the tailored resume and cover letter sent, and the original posting.</p>
   </header>
 
-  <div class="grid grid-cols-5 gap-3 mb-8">
-    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
-      <div class="font-mono text-2xl tabular-nums text-violet-300" id="stat-interview">–</div>
-      <div class="text-xs text-slate-400 mt-1">Interview</div>
+  <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
+    <div class="col-span-2 sm:col-span-1 rounded-xl border border-emerald-400/20 bg-gradient-to-b from-emerald-400/10 to-transparent p-5">
+      <div class="font-mono text-4xl font-medium tabular-nums text-emerald-300" id="stat-applied">–</div>
+      <div class="text-xs uppercase tracking-wide text-slate-400 mt-2">Applied</div>
     </div>
-    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
-      <div class="font-mono text-2xl tabular-nums text-emerald-400" id="stat-applied">–</div>
-      <div class="text-xs text-slate-400 mt-1">Applied</div>
+    <div class="rounded-xl border border-white/5 bg-white/[0.03] p-5">
+      <div class="font-mono text-4xl font-medium tabular-nums text-sky-300" id="stat-total">–</div>
+      <div class="text-xs uppercase tracking-wide text-slate-400 mt-2">Tracked</div>
     </div>
-    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
-      <div class="font-mono text-2xl tabular-nums text-amber-300" id="stat-prepared">–</div>
-      <div class="text-xs text-slate-400 mt-1">Prepared, not yet applied</div>
+    <div class="rounded-xl border border-white/5 bg-white/[0.03] p-5">
+      <div class="font-mono text-4xl font-medium tabular-nums text-amber-300" id="stat-prepared">–</div>
+      <div class="text-xs uppercase tracking-wide text-slate-400 mt-2">Queued</div>
     </div>
-    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
-      <div class="font-mono text-2xl tabular-nums text-rose-400" id="stat-rejected">–</div>
-      <div class="text-xs text-slate-400 mt-1">Rejected</div>
+    <div class="rounded-xl border border-white/5 bg-white/[0.03] p-5">
+      <div class="font-mono text-4xl font-medium tabular-nums text-violet-300" id="stat-interview">–</div>
+      <div class="text-xs uppercase tracking-wide text-slate-400 mt-2">Interview</div>
     </div>
-    <div class="rounded-lg border border-slate-800 bg-slate-800/40 p-4">
-      <div class="font-mono text-2xl tabular-nums text-sky-400" id="stat-total">–</div>
-      <div class="text-xs text-slate-400 mt-1">Total tracked</div>
+    <div class="rounded-xl border border-white/5 bg-white/[0.03] p-5">
+      <div class="font-mono text-4xl font-medium tabular-nums text-rose-300" id="stat-rejected">–</div>
+      <div class="text-xs uppercase tracking-wide text-slate-400 mt-2">Rejected</div>
     </div>
   </div>
-  <div class="font-mono text-xs text-slate-500 mb-10" id="updated-line"></div>
+  <div class="flex h-2 w-full overflow-hidden rounded-full bg-white/5 mb-3" id="status-bar"></div>
+  <div class="font-mono text-xs text-slate-500 mb-8" id="updated-line"></div>
+
+  <section class="mb-12 rounded-xl border border-white/5 bg-white/[0.02] p-5">
+    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-4">
+      <h2 class="font-display text-lg font-medium text-slate-100">Applications per day</h2>
+      <span class="font-mono text-xs text-slate-500" id="heat-summary"></span>
+    </div>
+    <div class="grid grid-flow-col grid-rows-7 gap-[4px]" style="grid-template-columns: repeat(26, minmax(0, 1fr));" id="heatmap"></div>
+    <div class="flex items-center gap-1.5 mt-3 font-mono text-[10px] text-slate-500">less<span class="heat-cell bg-white/5"></span><span class="heat-cell bg-emerald-900"></span><span class="heat-cell bg-emerald-700"></span><span class="heat-cell bg-emerald-500"></span><span class="heat-cell bg-emerald-300"></span>more</div>
+  </section>
 
   <section class="mb-10">
     <div class="flex items-baseline gap-2 mb-3">
       <h2 class="font-display text-lg font-medium text-slate-100">Interview</h2>
       <span class="font-mono text-xs text-slate-500" id="interview-count"></span>
     </div>
-    <div class="rounded-lg border border-slate-800 divide-y divide-slate-800 bg-slate-800/20 overflow-hidden" id="interview-list"></div>
+    <div class="rounded-xl border border-white/5 divide-y divide-white/5 bg-white/[0.02] overflow-hidden" id="interview-list"></div>
   </section>
 
   <section class="mb-10">
@@ -67,7 +87,7 @@
       <h2 class="font-display text-lg font-medium text-slate-100">Applied</h2>
       <span class="font-mono text-xs text-slate-500" id="applied-count"></span>
     </div>
-    <div class="rounded-lg border border-slate-800 divide-y divide-slate-800 bg-slate-800/20 overflow-hidden" id="applied-list"></div>
+    <div class="rounded-xl border border-white/5 divide-y divide-white/5 bg-white/[0.02] overflow-hidden" id="applied-list"></div>
   </section>
 
   <section class="mb-10">
@@ -75,7 +95,7 @@
       <h2 class="font-display text-lg font-medium text-slate-100">Prepared</h2>
       <span class="font-mono text-xs text-slate-500" id="prepared-count"></span>
     </div>
-    <div class="rounded-lg border border-slate-800 divide-y divide-slate-800 bg-slate-800/20 overflow-hidden" id="prepared-list"></div>
+    <div class="rounded-xl border border-white/5 divide-y divide-white/5 bg-white/[0.02] overflow-hidden" id="prepared-list"></div>
   </section>
 
   <section class="mb-10">
@@ -83,7 +103,7 @@
       <h2 class="font-display text-lg font-medium text-slate-100">Rejected</h2>
       <span class="font-mono text-xs text-slate-500" id="rejected-count"></span>
     </div>
-    <div class="rounded-lg border border-slate-800 divide-y divide-slate-800 bg-slate-800/20 overflow-hidden" id="rejected-list"></div>
+    <div class="rounded-xl border border-white/5 divide-y divide-white/5 bg-white/[0.02] overflow-hidden" id="rejected-list"></div>
   </section>
 
   <footer class="text-center font-mono text-xs text-slate-500 mt-6">source: <a class="text-slate-500 hover:text-slate-300 underline underline-offset-2" href="https://github.com/deepmroot/coop-ledger">deepmroot/coop-ledger</a></footer>
@@ -110,7 +130,7 @@
     { company: "Workday (Machine Learning Engineer Intern)", role: "Machine Learning Engineer Intern (Canada)", location: "Vancouver, BC", status: "applied", date: "2026-11-17", evidence: "Submitted 2026-11-17 via Workday careers, signed in with Google (\"Application Submitted\"). Agreed to Workday NDA and interview-recording consent required by the form.", applyLink: "https://workday.wd5.myworkdayjobs.com/Workday_Early_Career/job/Canada-BC-Vancouver/Machine-Learning-Engineer-Intern_JR-0110806", resumeUrl: "applications/Mandeep_Singh_WorkdayMLIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_WorkdayMLIntern_Cover_Letter.pdf" },
     { company: "Avanade (Winter Internship Canada 2027, Montreal)", role: "Winter Internship - Canada 2027", location: "Montreal, QC", status: "applied", date: "2026-11-17", evidence: "Submitted 2026-11-17 via Avanade Workday, signed in with Google (application task completed).", applyLink: "https://accenture.wd103.myworkdayjobs.com/AvanadeCareers/job/Montreal-5-Place-Ville-Marie-Corp/Stage-d-hiver---Canada-2027_R00371948", resumeUrl: "applications/Mandeep_Singh_AvanadeWinterIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AvanadeWinterIntern_Cover_Letter.pdf" },
     { company: "Avanade (Data Engineering Intern)", role: "Data Engineering Intern (Winter Internship - Canada 2027)", location: "Toronto, ON", status: "applied", date: "2026-11-17", evidence: "Confirmed — Avanade, \"Thanks for applying for Winter Internship - Canada 2027\" (2026-11-17); Workday, Google sign-in.", applyLink: "https://accenture.wd103.myworkdayjobs.com/AvanadeCareers/job/Toronto-40-King-St-W-Corp/Winter-Internship---Canada-2027_R00371984", resumeUrl: "applications/Mandeep_Singh_AvanadeDataEngIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AvanadeDataEngIntern_Cover_Letter.pdf" },
-    { company: "Canadian Tire Corporation (Programmer Analyst Intern)", role: "Programmer Analyst Intern (12 months) - Winter 2027", location: "Mississauga, ON", status: "prepared", evidence: "Prepared 2026-11-17. Found via treg/hirebase. Workday. Gap: ASP.NET/C#, MSSQL.", applyLink: "https://canadiantirecorporation.wd3.myworkdayjobs.com/Enterprise_External_Careers_Site/job/Mississauga-ON/Programmer-Analyst-Intern--12-months----Winter-2027_JR167748", resumeUrl: "applications/Mandeep_Singh_CanadianTireProgrammerAnalyst_Resume.pdf", coverUrl: "applications/Mandeep_Singh_CanadianTireProgrammerAnalyst_Cover_Letter.pdf" },
+    { company: "Canadian Tire Corporation (Programmer Analyst Intern)", role: "Programmer Analyst Intern (12 months) - Winter 2027", location: "Mississauga, ON", status: "applied", date: "2026-11-18", evidence: "Applied 2026-11-18 via Workday (submitted; jobTasks/completed confirmation). Tailored resume and cover letter.", applyLink: "https://canadiantirecorporation.wd3.myworkdayjobs.com/Enterprise_External_Careers_Site/job/Mississauga-ON/Programmer-Analyst-Intern--12-months----Winter-2027_JR167748", resumeUrl: "applications/Mandeep_Singh_CanadianTireProgrammerAnalyst_Resume.pdf", coverUrl: "applications/Mandeep_Singh_CanadianTireProgrammerAnalyst_Cover_Letter.pdf" },
     { company: "Altera (Software Engineer Intern)", role: "Software Engineer - Intern", location: "Toronto, ON", status: "prepared", evidence: "Prepared 2026-11-17. Found via treg/hirebase + jobs.txt. Workday account created (accounts.txt). Weak fit (C/C++/FPGA).", applyLink: "https://altera.wd1.myworkdayjobs.com/Altera/job/Toronto-Ontario-Canada/Software-Engineer----Intern_R03414", resumeUrl: "applications/Mandeep_Singh_AlteraSWEIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AlteraSWEIntern_Cover_Letter.pdf" },
     { company: "Lincoln Electric (Software Engineering Spring 2027 Intern)", role: "Software Engineering Spring 2027 Internship (Remote - Canada)", location: "Remote, Canada", status: "applied", date: "2026-11-17", evidence: "Submitted 2026-11-17 via Lincoln Electric SuccessFactors (\"Successfully Applied ... Your application has been sent. Thank you!\"). Account in Documents/job-search/accounts.txt.", applyLink: "https://jobs.lincolnelectric.com/job/-/1458131633/", resumeUrl: "applications/Mandeep_Singh_LincolnElectricSWEIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_LincolnElectricSWEIntern_Cover_Letter.pdf" },
     { company: "CMHC (Junior Developer Intern)", role: "Junior Developer Intern", location: "Ottawa, ON", status: "prepared", evidence: "Prepared 2026-11-17. Found via treg/hirebase. CLOSED: posting says 'this position has been filled' (checked 2026-11-17); not submitted.", applyLink: "https://careers.cmhc-schl.gc.ca/job/-/607876317/", resumeUrl: "applications/Mandeep_Singh_CMHCJuniorDevIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_CMHCJuniorDevIntern_Cover_Letter.pdf" },
@@ -328,7 +348,7 @@
     { company: "Entrust (Intern - Software Development, 8 months)", role: "Intern - Software Development - 8 months - Hybrid Ottawa", location: "Ottawa, ON", status: "prepared", evidence: "Prepared 2026-11-18 (SimplifyJobs/Workday search). Jan 4, 2027, 8 months (stated deadline Oct 31 passed; still accepting)", applyLink: "https://entrust.wd1.myworkdayjobs.com/en-US/entrustcareers/job/Canada---Ottawa/XMLNAME--Intern---Software-Development----8-months---Hybrid-Ottawa_R004359", resumeUrl: "applications/Mandeep_Singh_EntrustSWDevIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_EntrustSWDevIntern_Cover_Letter.pdf" },
     { company: "Clio (Software Developer, Co-op)", role: "Software Developer, Co-op (January - August 2027)", location: "Burnaby, BC", status: "prepared", evidence: "Prepared 2026-11-18 (SimplifyJobs/Workday search). Jan - Aug 2027, 8 months", applyLink: "https://clio.wd3.myworkdayjobs.com/en-US/cliocareersite/job/Toronto/Software-Developer--Co-op_REQ-1577", resumeUrl: "applications/Mandeep_Singh_ClioSWDevCoop2027_Resume.pdf", coverUrl: "applications/Mandeep_Singh_ClioSWDevCoop2027_Cover_Letter.pdf" },
     { company: "People Inc. / Dotdash Meredith (Cloud Platform Engineering Intern)", role: "Cloud Platform Engineering Intern", location: "Edmonton, AB", status: "prepared", evidence: "Prepared 2026-11-18 (SimplifyJobs/Workday search). Winter 2027 (ends May 2027)", applyLink: "https://meredith.wd5.myworkdayjobs.com/en-US/ext/job/Edmonton-AB---10160-103-St-NW/Cloud-Platform-Engineering-Intern_JR15684", resumeUrl: "applications/Mandeep_Singh_PeopleIncCloudPlatformIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_PeopleIncCloudPlatformIntern_Cover_Letter.pdf" },
-    { company: "Aptiv / Wind River (Cloud Engineering Intern, AI Tooling)", role: "Cloud Engineering Intern", location: "Kanata, ON", status: "prepared", evidence: "Prepared 2026-11-18 (SimplifyJobs/Workday search). Winter 2027", applyLink: "https://aptiv.wd5.myworkdayjobs.com/en-US/aptiv_careers/job/CAN-Kanata-2-ON---WR/Cloud-Engineering-Intern_J000704383", resumeUrl: "applications/Mandeep_Singh_AptivAIToolingIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AptivAIToolingIntern_Cover_Letter.pdf" },
+    { company: "Aptiv / Wind River (Cloud Engineering Intern, AI Tooling)", role: "Cloud Engineering Intern", location: "Kanata, ON", status: "applied", date: "2026-11-18", evidence: "Applied 2026-11-18 via Workday (submitted; jobTasks/completed confirmation). Tailored resume and cover letter.", applyLink: "https://aptiv.wd5.myworkdayjobs.com/en-US/aptiv_careers/job/CAN-Kanata-2-ON---WR/Cloud-Engineering-Intern_J000704383", resumeUrl: "applications/Mandeep_Singh_AptivAIToolingIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AptivAIToolingIntern_Cover_Letter.pdf" },
     { company: "Aptiv (Software Engineering Intern, DO-178C)", role: "Software Engineering Intern", location: "Kanata, ON", status: "prepared", evidence: "Prepared 2026-11-18 (SimplifyJobs/Workday search). Winter 2027", applyLink: "https://aptiv.wd5.myworkdayjobs.com/en-US/aptiv_careers/job/CAN-Kanata-2-ON---WR/Software-Engineering-Intern_J000704368-1", resumeUrl: "applications/Mandeep_Singh_AptivDO178SWEIntern_Resume.pdf", coverUrl: "applications/Mandeep_Singh_AptivDO178SWEIntern_Cover_Letter.pdf" },
     { company: "Shell Canada (Assessed Internship Programme 2027)", role: "Shell Assessed Internship Programme (January/May 2027) - Commercial (Computer Science)", location: "Calgary, AB", status: "prepared", evidence: "Prepared 2026-11-18 (SimplifyJobs/Workday search). Jan/May/Sep 2027, 4-16 months (closes 2027-03-01)", applyLink: "https://shell.wd3.myworkdayjobs.com/en-US/ShellCareers/job/Scotford/Shell-Assessed-Internship-Programme--January-May-2027----Programme-de-stages-valus-de-Shell--janvier---mai-2027----Canada_R205117", resumeUrl: "applications/Mandeep_Singh_ShellCanadaInternship2027_Resume.pdf", coverUrl: "applications/Mandeep_Singh_ShellCanadaInternship2027_Cover_Letter.pdf" },
     { company: "Lyft (Software Engineer Intern, Backend, Toronto)", role: "Software Engineer Intern, Backend (Summer 2027 - Toronto)", location: "Toronto, ON", status: "prepared", evidence: "Prepared 2026-11-18 (SimplifyJobs/Workday search). Summer 2027", applyLink: "https://job-boards.greenhouse.io/lyft/jobs/8767710002", resumeUrl: "applications/Mandeep_Singh_LyftSWEBackendToronto_Resume.pdf", coverUrl: "applications/Mandeep_Singh_LyftSWEBackendToronto_Cover_Letter.pdf" },
@@ -494,7 +514,7 @@
     var postedClasses = d.posted ? "text-sky-400/70" : "text-slate-600 italic";
 
     return (
-      '<div class="grid grid-cols-[1.5fr_0.8fr_1.05fr_0.9fr_1.05fr] gap-4 p-4 items-start hover:bg-slate-800/50 transition-colors">' +
+      '<div class="grid grid-cols-[1.5fr_0.8fr_1.05fr_0.9fr_1.05fr] gap-4 p-4 items-start hover:bg-white/[0.03] transition-colors">' +
         '<div>' +
           '<div class="font-display text-base font-medium text-slate-100">' + escapeHtml(d.company) + fitBadge(fitScore(d)) + closesBadge(d.closes) + '</div>' +
           '<div class="text-sm text-slate-400 mt-0.5">' + escapeHtml(d.role) + '</div>' +
@@ -505,7 +525,7 @@
           '<span class="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wide px-2 py-1 rounded border ' + pillClasses + '"><span class="w-1.5 h-1.5 rounded-full bg-current"></span>' + escapeHtml(d.status) + '</span>' +
           (d.date ? '<div class="font-mono text-xs text-slate-500 mt-1.5">' + escapeHtml(d.date) + '</div>' : '') +
         '</div>' +
-        '<div class="text-sm text-slate-400">' + escapeHtml(d.evidence || "") + '</div>' +
+        '<div class="text-sm text-slate-400 clamp-3" title="' + escapeHtml(d.evidence || "") + '">' + escapeHtml(d.evidence || "") + '</div>' +
         '<div class="flex flex-col items-start gap-1.5">' + links + '</div>' +
         actionCell +
       '</div>'
@@ -546,8 +566,34 @@
     document.getElementById("rejected-list").innerHTML =
       rejected.length ? rejected.map(renderRow).join("") : '<div class="' + emptyClasses + '">None yet.</div>';
 
+    var parts = [[applied.length, "bg-emerald-400"], [interview.length, "bg-violet-400"], [prepared.length, "bg-amber-300"], [rejected.length, "bg-rose-400"]];
+    document.getElementById("status-bar").innerHTML = parts.filter(function (p) { return p[0] > 0; }).map(function (p) {
+      return '<div class="' + p[1] + '" style="width:' + (100 * p[0] / Math.max(DATA.length, 1)) + '%"></div>';
+    }).join("");
+
+    var perDay = {};
+    applied.concat(interview).forEach(function (r) { if (r.date) perDay[r.date] = (perDay[r.date] || 0) + 1; });
+    var dayKey = function (d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var weeks = 26;
+    var start = new Date(today); start.setDate(start.getDate() - start.getDay() - (weeks - 1) * 7);
+    var cells = "", best = 0, activeDays = 0, lastWeek = 0;
+    for (var d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+      var n = perDay[dayKey(d)] || 0;
+      if (n > best) best = n;
+      if (n > 0) activeDays++;
+      if ((today - d) / 86400000 < 7) lastWeek += n;
+      var shade = n === 0 ? "bg-white/5" : n < 3 ? "bg-emerald-900" : n < 7 ? "bg-emerald-700" : n < 15 ? "bg-emerald-500" : "bg-emerald-300";
+      cells += '<div class="aspect-square rounded-[4px] ' + shade + '" title="' + dayKey(d) + ": " + n + ' applied"></div>';
+    }
+    document.getElementById("heatmap").innerHTML = cells;
+    var todayCount = perDay[dayKey(today)] || 0;
+    document.getElementById("heat-summary").textContent = todayCount + " today · " + lastWeek + " this week · best day " + best;
+
+    var latest = applied.concat(interview).map(function (r) { return r.date || ""; }).sort().pop();
+    document.getElementById("live-line").textContent = latest ? "auto-applying · last submitted " + latest : "auto-applying";
     document.getElementById("updated-line").textContent =
-      DATA.length + " application" + (DATA.length === 1 ? "" : "s") + " tracked.";
+      DATA.length + " application" + (DATA.length === 1 ? "" : "s") + " tracked across " + activeDays + " active days.";
   }
   renderAll();
 
